@@ -13,12 +13,12 @@ def load_config():
 config = load_config()
 
 logging.basicConfig(
-    filename="trading.log",
+    filename=config['logging']['log_file'],
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s"
 )
 
-conn = sqlite3.connect("trades.db")
+conn = sqlite3.connect(config['database']['db_file'])
 cursor = conn.cursor()
 
 cursor.execute("""
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS decisions (
 """)
 
 def save_decision(signal, price, sma, fear):
-    conn = sqlite3.connect("trades.db")
+    conn = sqlite3.connect(config['database']['db_file'])
     cursor = conn.cursor()
 
     cursor.execute("""

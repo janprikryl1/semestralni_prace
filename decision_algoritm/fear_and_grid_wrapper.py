@@ -7,7 +7,8 @@ load_dotenv()
 def get_fear_and_greed(days=1):
     api_key = os.getenv("COINMARKETCUP")
     if not api_key:
-        return "Missing API key"
+        print("Missing API key")
+        quit(-1)
 
     api_url = f"https://pro-api.coinmarketcap.com/v3/fear-and-greed/historical?limit={days}"
 
