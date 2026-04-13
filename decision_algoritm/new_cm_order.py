@@ -8,10 +8,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from config_loader import config
+
 client = Client(api_key=os.getenv("API_KEY"), api_secret=os.getenv("API_SECRET"))
 
-USDC_PER_ORDER = 10.0
-SYMBOL = 'BTCUSDC'
+USDC_PER_ORDER = 10.0 # Tato hodnota by mohla být v risk_management, ponechávám prozatím jako default nebo ji vytáhněte z configu
+SYMBOL = config['trading']['symbol']
+MIN_USDC_BALANCE = config['limits']['min_usdc_balance']
 MIN_NOTIONAL = 5.0
 STEP_SIZE = 0.00001
 
@@ -20,8 +23,8 @@ def check_usdc_balance(client):
         info = client.get_asset_balance(asset='USDC')
         free_usdc = float(info['free'])
         print(f"*** DIAGNOSTIKA ZŮSTATKU: USDC na Spotu (Dostupné): {free_usdc:.4f} USDC ***")
-        if free_usdc < 10.50:
-             print("!!! POZOR: Skript vidí, že dostupný zůstatek USDC je PŘÍLIŠ NÍZKÝ, i když na účtu jsou peníze.")
+        if free_usdc < MIN_USDC_BALANCE:
+             print(f"!!! POZOR: Skript vidí, že dostupný zůstatek USDC je PŘÍLIŠ NÍZKÝ (méně než {MIN_USDC_BALANCE} USDC).")
         return free_usdc
     except Exception as e:
         print(f"Nepodařilo se získat zůstatek USDC přes API: {e}")

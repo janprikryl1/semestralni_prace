@@ -1,16 +1,10 @@
 from fear_and_grid_wrapper import get_fear_and_greed
 from sma import compute_sma
 from price_data import get_price_data
+from config_loader import config
 import logging
 import sqlite3
 import datetime
-import json
-
-def load_config():
-    with open("config.json", "r") as f:
-        return json.load(f)
-
-config = load_config()
 
 logging.basicConfig(
     filename=config['logging']['log_file'],
