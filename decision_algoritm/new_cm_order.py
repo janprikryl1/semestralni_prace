@@ -1,189 +1,74 @@
+import logging
 import os
-import math
-import time
-import datetime
 from binance.client import Client
 from binance.exceptions import BinanceAPIException
 from dotenv import load_dotenv
+from config_loader import config
+from database import save_trade
 
 load_dotenv()
-
-from config_loader import config
-
 client = Client(api_key=os.getenv("API_KEY"), api_secret=os.getenv("API_SECRET"))
 
-USDC_PER_ORDER = 10.0 # Tato hodnota by mohla být v risk_management, ponechávám prozatím jako default nebo ji vytáhněte z configu
+USDC_PER_ORDER = 10.0
 SYMBOL = config['trading']['symbol']
-MIN_USDC_BALANCE = config['limits']['min_usdc_balance']
+MIN_COIN_BALANCE = config['limits']['min_balance']
 MIN_NOTIONAL = 5.0
 STEP_SIZE = 0.00001
 
-def check_usdc_balance(client):
+def check_balance(client, asset):
     try:
-        info = client.get_asset_balance(asset='USDC')
-        free_usdc = float(info['free'])
-        print(f"*** DIAGNOSTIKA ZŮSTATKU: USDC na Spotu (Dostupné): {free_usdc:.4f} USDC ***")
-        if free_usdc < MIN_USDC_BALANCE:
-             print(f"!!! POZOR: Skript vidí, že dostupný zůstatek USDC je PŘÍLIŠ NÍZKÝ (méně než {MIN_USDC_BALANCE} USDC).")
-        return free_usdc
+        info = client.get_asset_balance(asset=asset)
+        free_amount = float(info['free'])
+        print(f"*** DIAGNOSTIKA ZŮSTATKU: {asset} na Spotu (Dostupné): {free_amount:.4f} {asset} ***")
+        if free_amount < MIN_COIN_BALANCE:
+             print(f"!!! POZOR: Skript vidí, že dostupný zůstatek {asset} je PŘÍLIŠ NÍZKÝ (méně než {MIN_COIN_BALANCE} {asset}).")
+        return free_amount
     except Exception as e:
-        print(f"Nepodařilo se získat zůstatek USDC přes API: {e}")
+        print(f"Nepodařilo se získat zůstatek {asset} přes API: {e}")
         return 0.0
 
-def format_quantity(qty_float, step_size): # Zaokrouhlí a naformátuje množství na string podle STEP_SIZE, aby se zabránilo e-notaci.
-    decimals = int(round(-math.log10(step_size)))
-    formatted_qty = f"{qty_float:.8f}" 
-    return formatted_qty.rstrip('0').rstrip('.')
-
-def convert_ms_to_datetime(timestamp_ms): # Převede časové razítko z ms na čitelný formát H:M:S.ms
-    if not timestamp_ms:
-        return "N/A"
-    return datetime.datetime.fromtimestamp(timestamp_ms / 1000.0, tz=datetime.timezone.utc).strftime('%H:%M:%S.%f')[:-3] + " UTC"
+def get_balance(client, asset):
+    info = client.get_asset_balance(asset=asset)
+    return float(info['free'])
 
 
-def execute_experiment():
-    print("--- Příprava dat ---")
-    
-    ticker = client.get_symbol_ticker(symbol=SYMBOL)
-    current_price = float(ticker['price'])
-    print(f"Aktuální {SYMBOL} cena: {current_price:.2f} USDC")
+def execute_buy(client, symbol, usdc_amount):
+    ticker = client.get_symbol_ticker(symbol=symbol)
+    price = float(ticker['price'])
 
-    # Výpočet potřebného množství a zaokrouhlení
-    qty_needed_float = USDC_PER_ORDER / current_price
-    steps = math.ceil(qty_needed_float / STEP_SIZE)
-    qty_to_buy = steps * STEP_SIZE
-    quantity_str = format_quantity(qty_to_buy, STEP_SIZE)
-    print(f"Quantity pro každou objednávku: {quantity_str} BTC (~{qty_to_buy * current_price:.2f} USDC)")
+    quantity = usdc_amount / price
 
-    # Definování limitních cen pro Taker a Maker
-    taker_limit_price = round(current_price * 1.05, 2)
-    maker_limit_price = round(current_price * 0.99, 2)
-    
-    print(f"Limitní cena Taker (okamžité vyplnění): {taker_limit_price:.2f}")
-    print(f"Limitní cena Maker (čeká na vyplnění): {maker_limit_price:.2f}")
+    logging.info(f"BUY attempt: {symbol}, USDC={usdc_amount}, qty={quantity}, price={price}")
+    order = client.order_market_buy(
+        symbol=symbol,
+        quantity=round(quantity, 6)
+    )
+    logging.info(f"BUY SUCCESS: {order}")
+    save_trade("BUY", symbol, quantity, price, "SUCCESS")
+    return order
 
-    results = {}
-    
-    print("\n--- Spouštění Objednávek ---")
 
-    # 1. Market Taker Order
+def execute_sell(client, symbol, btc_amount):
     try:
-        print("1. Odesílání Market Buy...")
-        market_order = client.order_market_buy(
-            symbol=SYMBOL,
-            quantity=quantity_str
+        quantity = round(btc_amount, 6)
+
+        ticker = client.get_symbol_ticker(symbol=symbol)
+        price = float(ticker['price'])
+
+        logging.info(f"SELL attempt: {symbol}, qty={quantity}, price={price}")
+        order = client.order_market_sell(
+            symbol=symbol,
+            quantity=quantity
         )
-        # Použijeme transactTime jako čas zadání
-        market_order['submissionTime'] = market_order.get('transactTime')
-        results['Market Taker'] = market_order
+        logging.info(f"SELL SUCCESS: {order}")
+        save_trade("SELL", symbol, quantity, price, "SUCCESS")
+        return order
+
     except BinanceAPIException as e:
-        print(f"Chyba Market Order: {e}")
-        
-    # 2. Limit Taker Order
-    try:
-        print("2. Odesílání Limit Taker Buy...")
-        limit_taker_order = client.order_limit_buy(
-            symbol=SYMBOL,
-            quantity=quantity_str,
-            price=f"{taker_limit_price:.2f}"
-        )
-        limit_taker_order['submissionTime'] = limit_taker_order.get('transactTime')
-        results['Limit Taker'] = limit_taker_order
-    except BinanceAPIException as e:
-        print(f"Chyba Limit Taker Order: {e}")
-
-    # 3. Limit Maker Order
-    time.sleep(1) 
-    """try:
-        print("3. Odesílám Limit Maker Buy...")
-        limit_maker_order = client.order_limit_buy(
-            symbol=SYMBOL,
-            quantity=quantity_str,
-            price=f"{maker_limit_price:.2f}"
-        )
-        limit_maker_order['submissionTime'] = limit_maker_order.get('transactTime')
-        results['Limit Maker'] = limit_maker_order
-    except BinanceAPIException as e:
-        print(f"Chyba Limit Maker Order: {e}")"""
-
-    print("\n--- Vyhodnocení obchodu a poplatků ---")
-    
-    final_evaluation = []
-    #maker_order_id = None # Pro uložení ID maker objednávky
-
-    for name, order in results.items():
-        if 'orderId' not in order:
-            continue
-            
-        submission_time_ms = order.get('submissionTime') # Čas zadání (ms)
-        
-        # Získání detailů obchodu
-        trades = client.get_my_trades(symbol=SYMBOL, orderId=order['orderId'])
-
-        # --- Robustní obsluha pro NEVYPLNĚNÉ objednávky (např. Maker) ---
-        if not trades:
-            #maker_order_id = order['orderId']
-            
-            final_evaluation.append({
-                "Typ": name,
-                "ID Objednávky": order['orderId'],
-                "Získané BTC": "0.00000000",
-                "Utracené USDC": "0.0000",
-                "Efektivní Cena (USDC/BTC)": "NEVYPLNĚNO",
-                "Poplatek": "0.00000000 N/A",
-                "Zadání Příkazu (UTC)": convert_ms_to_datetime(submission_time_ms),
-                "Vyplnění Příkazu (UTC)": "NEVYPLNĚNO",
-                "Latency (ms)": "N/A"
-            })
-            continue
-
-        # --- Výpočet pro VYPLNĚNÉ objednávky ---
-        
-        # Čas vyplnění je čas prvního (nebo jediného) obchodu
-        fill_time_ms = float(trades[0]['time'])
-        latency_ms = fill_time_ms - submission_time_ms
-        
-        total_btc_bought = sum(float(trade['qty']) for trade in trades)
-        total_usdc_spent = sum(float(trade['quoteQty']) for trade in trades)
-        total_commission = sum(float(trade['commission']) for trade in trades)
-        commission_asset = trades[0]['commissionAsset']
-        
-        effective_price = total_usdc_spent / total_btc_bought
-
-        final_evaluation.append({
-            "Typ": name,
-            "ID Objednávky": order['orderId'],
-            "Získané BTC": f"{total_btc_bought:.8f}",
-            "Utracené USDC": f"{total_usdc_spent:.4f}",
-            "Efektivní Cena (USDC/BTC)": f"{effective_price:.2f}",
-            "Poplatek": f"{total_commission:.8f} {commission_asset}",
-            "Zadání Příkazu (UTC)": convert_ms_to_datetime(submission_time_ms),
-            "Vyplnění Příkazu (UTC)": convert_ms_to_datetime(fill_time_ms),
-            "Latency (ms)": f"{latency_ms:.0f}"
-        })
-
-    
-    print("\n")
-    print("-----------------------------------------------------------------------------------------------------------------------------------------------------------------")
-    print(f"| {'Typ':<15} | {'Zadání Příkazu (UTC)':<22} | {'Vyplnění Příkazu (UTC)':<22} | {'Latency (ms)':<15} | {'Získané BTC':<15} | {'Utracené USDC':<15} | {'Efektivní Cena (USDC/BTC)':<26} | {'Poplatek':<20} |")
-    print("-----------------------------------------------------------------------------------------------------------------------------------------------------------------")
-    for item in final_evaluation:
-        print(f"| {item['Typ']:<15} | {item['Zadání Příkazu (UTC)']:<22} | {item['Vyplnění Příkazu (UTC)']:<22} | {item['Latency (ms)']:<15} | {item['Získané BTC']:<15} | {item['Utracené USDC']:<15} | {item['Efektivní Cena (USDC/BTC)']:<26} | {item['Poplatek']:<20} |")
-    print("-----------------------------------------------------------------------------------------------------------------------------------------------------------------")
-
-    print("\n")
-    print("--- Vyhodnocení ---")
-    print("Efektivně nejvýhodnější je ten obchod, kde je 'Efektivní Cena (USDC/BTC)' nejnižší (menší cena za 1 BTC).")
-    
-    """if maker_order_id:
-        print(f"\nPOZOR: Limit Maker objednávka (ID: {maker_order_id}) je stále OTEVŘENÁ.")
-        try:
-            client.cancel_order(symbol=SYMBOL, orderId=maker_order_id)
-            print("=> Objednávka byla úspěšně zrušena.")
-        except BinanceAPIException as e:
-            print(f"=> CHYBA při rušení objednávky: {e}")"""
-
+        logging.error(f"SELL FAILED: {e}")
+        save_trade("SELL", symbol, 0, 0, "ERROR")
+        return None
 
 if __name__ == '__main__':
-    check_usdc_balance(client)
-    execute_experiment()
+    check_balance(client, 'BNB')
+    #execute_experiment()

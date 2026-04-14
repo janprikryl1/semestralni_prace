@@ -18,7 +18,8 @@
   },
   "limits": {
     "min_usdc_balance": 10,
-    "min_btc_balance": 0.0001
+    "min_btc_balance": 0.0001,
+    "min_balance": 0.0001
   },
   "logging": {
     "log_file": "trading.log"

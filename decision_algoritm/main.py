@@ -1,40 +1,16 @@
 from fear_and_grid_wrapper import get_fear_and_greed
+from new_cm_order import get_balance, client, execute_buy, execute_sell
 from sma import compute_sma
 from price_data import get_price_data
 from config_loader import config
+from database import save_trade, save_decision
 import logging
-import sqlite3
-import datetime
 
 logging.basicConfig(
     filename=config['logging']['log_file'],
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s"
 )
-
-conn = sqlite3.connect(config['database']['db_file'])
-cursor = conn.cursor()
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS decisions (
-    time TEXT,
-    signal TEXT,
-    price REAL,
-    sma REAL,
-    fear INTEGER
-)
-""")
-
-def save_decision(signal, price, sma, fear):
-    conn = sqlite3.connect(config['database']['db_file'])
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    INSERT INTO decisions VALUES (?, ?, ?, ?, ?)
-    """, (datetime.datetime.now(), signal, price, sma, fear))
-
-    conn.commit()
-    conn.close()
 
 def get_signal():
     prices = get_price_data()
@@ -65,18 +41,46 @@ def get_signal():
 
     return signal
 
+def get_buy_amount(fear, usdc_balance, config):
+    if fear < 20:
+        return usdc_balance * config["risk_management"]["buy_strong"]
+    elif fear < 30:
+        return usdc_balance * config["risk_management"]["buy_normal"]
+    return 0
+
+def get_sell_amount(fear, btc_balance, config):
+    if fear > 80:
+        return btc_balance * config["risk_management"]["sell_strong"]
+    elif fear > 70:
+        return btc_balance * config["risk_management"]["sell_normal"]
+    return 0
+
+
+
 if __name__ == '__main__':
     signal = get_signal()
+    symbol = config["trading"]["symbol"]
 
-    print("SIGNAL:", signal)
+    usdc = get_balance(client, "USDC")
+    btc = get_balance(client, "BTC")
 
-    if signal == "BUY":
-        print("Nakupuju...")
-        # execute_buy()
+    fear = int(get_fear_and_greed()[0]['value'])
 
-    elif signal == "SELL":
-        print("Prodávám...")
-        # execute_sell()
+    print(f"Signal: {signal}, USDC: {usdc}, BTC: {btc}")
+
+    if signal == "BUY" and usdc > config["limits"]["min_usdc_balance"]:
+        amount = get_buy_amount(fear, usdc, config)
+
+        if amount > 0:
+            print(f"Nakupuju za {amount} USDC")
+            execute_buy(client, symbol, amount)
+
+    elif signal == "SELL" and btc > config["limits"]["min_btc_balance"]:
+        amount = get_sell_amount(fear, btc, config)
+
+        if amount > 0:
+            print(f"Prodávám {amount} BTC")
+            execute_sell(client, symbol, amount)
 
     else:
-        print("Nedělám nic")
+        print("HOLD")
