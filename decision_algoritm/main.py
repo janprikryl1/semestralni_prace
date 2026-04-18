@@ -5,6 +5,7 @@ from price_data import get_price_data
 from config_loader import config
 from database import save_trade, save_decision
 import logging
+import time
 
 logging.basicConfig(
     filename=config['logging']['log_file'],
@@ -84,3 +85,5 @@ if __name__ == '__main__':
 
     else:
         print("HOLD")
+
+    time.sleep(3600)  # 1 hour
