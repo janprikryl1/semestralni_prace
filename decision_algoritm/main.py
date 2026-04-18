@@ -72,14 +72,14 @@ if __name__ == '__main__':
         amount = get_buy_amount(fear, usdc, config)
 
         if amount > 0:
-            print(f"Nakupuju za {amount} USDC")
+            print(f"Buying for {amount} USDC")
             execute_buy(client, symbol, amount)
 
     elif signal == "SELL" and btc > config["limits"]["min_btc_balance"]:
         amount = get_sell_amount(fear, btc, config)
 
         if amount > 0:
-            print(f"Prodávám {amount} BTC")
+            print(f"Selling {amount} BTC")
             execute_sell(client, symbol, amount)
 
     else:

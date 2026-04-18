@@ -14,3 +14,7 @@ Tento přístup umožňuje zpětnou analýzu chování algoritmu a poskytuje pod
 Konfigurační parametry systému byly uloženy do externího souboru ve formátu JSON. Tento přístup umožňuje oddělení aplikační logiky od konfiguračních dat a usnadňuje experimentování s různými nastaveními strategie bez nutnosti zásahu do zdrojového kódu.
 
 Konfigurační soubor obsahuje zejména parametry technické analýzy, prahové hodnoty fundamentálních indikátorů a nastavení řízení rizika.
+
+Pro evidenci provedených obchodů byl implementován mechanismus ukládání dat do relační databáze SQLite. Každý obchod je zaznamenán spolu s časem, typem operace (nákup/prodej), množstvím, cenou a výsledným stavem.
+
+Současně byl využit logovací systém pro zaznamenávání průběhu operací a případných chyb při komunikaci s API burzy. Tento přístup umožňuje zpětnou analýzu a zvyšuje robustnost systému.
