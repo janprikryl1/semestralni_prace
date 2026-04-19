@@ -19,7 +19,7 @@ Síla signálu je odvozena z kombinace odchylky ceny od SMA a intenzity sentimen
 - řízení velikosti pozice podle sentimentu trhu
 - práce s reálným portfoliem `USDC` a `BTC`
 - režim `dry_run`, ve kterém se obchody pouze simulují
-- logování rozhodnutí do souboru `trading.log`
+- logování do adresáře `logs/`, včetně průběžného logu a samostatného logu pro každé spuštění
 - ukládání rozhodnutí a obchodů do databáze SQLite `trades.db`
 
 ## Struktura projektu
@@ -36,6 +36,8 @@ Síla signálu je odvozena z kombinace odchylky ceny od SMA a intenzity sentimen
   inicializace SQLite databáze a ukládání auditních záznamů
 - `config.json`:
   parametry strategie, limity a provozní nastavení
+- `logs/`:
+  provozní logy aplikace, včetně samostatných session logů
 
 ## Konfigurace
 
@@ -55,6 +57,7 @@ V `config.json` lze upravit:
 - prahy Fear and Greed pro `BUY` a `SELL`
 - procenta portfolia použitá pro position sizing
 - zapnutí nebo vypnutí `dry_run`
+- umístění a retenci logů
 
 ## Spuštění
 

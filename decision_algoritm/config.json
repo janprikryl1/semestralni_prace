@@ -30,7 +30,11 @@
     "min_balance": 0.0001
   },
   "logging": {
-    "log_file": "trading.log"
+    "log_dir": "logs",
+    "combined_log_file": "trading.log",
+    "session_log_template": "run-{timestamp}.log",
+    "backup_count": 14,
+    "level": "INFO"
   },
   "database": {
     "db_file": "trades.db"
