@@ -1,6 +1,8 @@
 {
   "trading": {
     "symbol": "BTCUSDC",
+    "base_asset": "BTC",
+    "quote_asset": "USDC",
     "hours_back": 100,
     "interval_seconds": 3600,
     "dry_run": false,
@@ -23,8 +25,8 @@
     "sell_normal": 0.6
   },
   "limits": {
-    "min_usdc_balance": 0.25,
-    "min_btc_balance": 0.0001,
+    "min_quote_balance": 0.25,
+    "min_base_balance": 0.0001,
     "min_balance": 0.0001
   },
   "logging": {

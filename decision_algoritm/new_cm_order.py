@@ -11,6 +11,8 @@ import time
 load_dotenv()
 
 SYMBOL = config['trading']['symbol']
+BASE_ASSET = config["trading"].get("base_asset", "BTC")
+QUOTE_ASSET = config["trading"].get("quote_asset", "USDC")
 MIN_COIN_BALANCE = config['limits']['min_balance']
 DRY_RUN = config["trading"].get("dry_run", True)
 ORDER_DECIMALS = config["trading"].get("quantity_precision", 6)
@@ -80,10 +82,10 @@ def adjust_quantity_to_lot_size(client, symbol, quantity):
     return float(adjusted_quantity)
 
 
-def execute_buy(client, symbol, usdc_amount):
+def execute_buy(client, symbol, quote_amount):
     ticker = client.get_symbol_ticker(symbol=symbol)
     price = float(ticker['price'])
-    quantity = usdc_amount / price
+    quantity = quote_amount / price
     quantity = adjust_quantity_to_lot_size(client, symbol, quantity)
     notional = quantity * price
     formatted_quantity = format_quantity(quantity)
@@ -95,13 +97,13 @@ def execute_buy(client, symbol, usdc_amount):
         return None
 
     if DRY_RUN:
-        logging.info("DRY RUN BUY: %s, USDC=%s, qty=%s, price=%s", symbol, usdc_amount, quantity, price)
+        logging.info("DRY RUN BUY: %s, %s=%s, qty=%s, price=%s", symbol, QUOTE_ASSET, quote_amount, quantity, price)
         simulated_order = {"mode": "DRY_RUN", "side": "BUY", "symbol": symbol, "quantity": quantity, "price": price}
         save_trade("BUY", symbol, quantity, price, notional, "SIMULATED", str(simulated_order))
         return simulated_order
 
     try:
-        logging.info("BUY attempt: %s, USDC=%s, qty=%s, price=%s", symbol, usdc_amount, quantity, price)
+        logging.info("BUY attempt: %s, %s=%s, qty=%s, price=%s", symbol, QUOTE_ASSET, quote_amount, quantity, price)
         order = client.order_market_buy(symbol=symbol, quantity=formatted_quantity)
         logging.info("BUY success: %s", order)
         save_trade("BUY", symbol, quantity, price, notional, "SUCCESS", str(order))
@@ -112,8 +114,8 @@ def execute_buy(client, symbol, usdc_amount):
         return None
 
 
-def execute_sell(client, symbol, btc_amount):
-    quantity = adjust_quantity_to_lot_size(client, symbol, btc_amount)
+def execute_sell(client, symbol, base_amount):
+    quantity = adjust_quantity_to_lot_size(client, symbol, base_amount)
     ticker = client.get_symbol_ticker(symbol=symbol)
     price = float(ticker['price'])
     notional = quantity * price

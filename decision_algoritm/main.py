@@ -15,6 +15,9 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)s | %(message)s"
 )
 
+BASE_ASSET = config["trading"].get("base_asset", "BTC")
+QUOTE_ASSET = config["trading"].get("quote_asset", "USDC")
+
 
 def evaluate_market():
     prices = get_price_data()
@@ -79,24 +82,24 @@ def evaluate_market():
     }
 
 
-def get_buy_amount(fear, usdc_balance):
+def get_buy_amount(fear, quote_balance):
     if fear is None:
         return 0.0
     if fear < 20:
-        return usdc_balance * config["risk_management"]["buy_strong"]
+        return quote_balance * config["risk_management"]["buy_strong"]
     if fear < 30:
-        return usdc_balance * config["risk_management"]["buy_normal"]
-    return usdc_balance * max(0.0, min(config["risk_management"]["buy_normal"], (50 - fear) / 100))
+        return quote_balance * config["risk_management"]["buy_normal"]
+    return quote_balance * max(0.0, min(config["risk_management"]["buy_normal"], (50 - fear) / 100))
 
 
-def get_sell_amount(fear, btc_balance):
+def get_sell_amount(fear, base_balance):
     if fear is None:
         return 0.0
     if fear > 80:
-        return btc_balance * config["risk_management"]["sell_strong"]
+        return base_balance * config["risk_management"]["sell_strong"]
     if fear > 70:
-        return btc_balance * config["risk_management"]["sell_normal"]
-    return btc_balance * max(config["risk_management"]["sell_normal"], max(0.0, (fear - 50) / 100))
+        return base_balance * config["risk_management"]["sell_normal"]
+    return base_balance * max(config["risk_management"]["sell_normal"], max(0.0, (fear - 50) / 100))
 
 
 def run_cycle():
@@ -108,8 +111,8 @@ def run_cycle():
 
     try:
         client = create_client()
-        usdc = get_balance(client, "USDC")
-        btc = get_balance(client, "BTC")
+        quote_balance = get_balance(client, QUOTE_ASSET)
+        base_balance = get_balance(client, BASE_ASSET)
     except (RuntimeError, BinanceAPIException, KeyError, TypeError, ValueError) as exc:
         logging.error("Unable to initialize Binance trading cycle: %s", exc)
         save_decision(
@@ -123,24 +126,24 @@ def run_cycle():
         )
         return "HOLD"
 
-    logging.info("Balances: USDC=%.4f BTC=%.8f", usdc, btc)
+    logging.info("Balances: %s=%.4f %s=%.8f", QUOTE_ASSET, quote_balance, BASE_ASSET, base_balance)
 
-    if signal == "BUY" and usdc > config["limits"]["min_usdc_balance"]:
-        amount = get_buy_amount(evaluation["fear"], usdc)
+    if signal == "BUY" and quote_balance > config["limits"]["min_quote_balance"]:
+        amount = get_buy_amount(evaluation["fear"], quote_balance)
         position_size = amount
 
         if amount > 0:
-            logging.info("Executing BUY for %.4f USDC", amount)
+            logging.info("Executing BUY for %.4f %s", amount, QUOTE_ASSET)
             execute_buy(client, symbol, amount)
         else:
             logging.info("BUY signal generated but computed amount was zero")
 
-    elif signal == "SELL" and btc > config["limits"]["min_btc_balance"]:
-        amount = get_sell_amount(evaluation["fear"], btc)
+    elif signal == "SELL" and base_balance > config["limits"]["min_base_balance"]:
+        amount = get_sell_amount(evaluation["fear"], base_balance)
         position_size = amount
 
         if amount > 0:
-            logging.info("Executing SELL for %.8f BTC", amount)
+            logging.info("Executing SELL for %.8f %s", amount, BASE_ASSET)
             execute_sell(client, symbol, amount)
         else:
             logging.info("SELL signal generated but computed amount was zero")

@@ -62,3 +62,7 @@
 2026-04-19 11:28:21,377 | INFO | Executing SELL for 0.00013504 BTC
 2026-04-19 11:28:22,236 | INFO | SELL attempt: BTCUSDC, qty=0.00013, price=75136.08
 2026-04-19 11:28:22,493 | INFO | SELL success: {'symbol': 'BTCUSDC', 'orderId': 9027325717, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ7d250e2e7f6a1f0c4836d8', 'transactTime': 1776590901540, 'price': '0.00000000', 'origQty': '0.00013000', 'executedQty': '0.00013000', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '9.76776190', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'SELL', 'workingTime': 1776590901540, 'fills': [{'price': '75136.63000000', 'qty': '0.00013000', 'commission': '0.00001121', 'commissionAsset': 'BNB', 'tradeId': 363929137}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}
+2026-04-19 11:36:55,901 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:36:55,901 | INFO | Signal=SELL, price=75131.97, sma=75582.98, fear=57, strength=0.0260
+2026-04-19 11:36:57,004 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 11:36:57,004 | INFO | Holding position for this cycle
