@@ -1,0 +1,5 @@
+2026-04-19 14:58:59,213 | INFO | Fear and Greed response fetched successfully
+2026-04-19 14:58:59,214 | INFO | Signal=BUY, price=75638.04, sma=75507.53, fear=57, strength=0.0317
+2026-04-19 14:59:00,332 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 14:59:00,332 | INFO | Executing BUY for 0.4387 USDC
+2026-04-19 14:59:01,209 | WARNING | Skipped BUY: computed quantity is below Binance LOT_SIZE minimum

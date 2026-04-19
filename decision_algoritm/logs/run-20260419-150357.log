@@ -1,0 +1,4 @@
+2026-04-19 15:04:01,631 | INFO | Fear and Greed response fetched successfully
+2026-04-19 15:04:01,632 | INFO | Signal=BUY, price=75718.38, sma=75504.85, fear=57, strength=0.0328
+2026-04-19 15:04:02,739 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 15:04:03,345 | WARNING | BUY signal generated but computed amount 0.4387 USDC is below exchange minimum 5.0000 USDC

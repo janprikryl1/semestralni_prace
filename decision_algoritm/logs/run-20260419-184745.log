@@ -1,0 +1,3 @@
+2026-04-19 18:47:48,276 | INFO | Fear and Greed response fetched successfully
+2026-04-19 18:47:48,277 | INFO | Signal=BUY, price=75623.33, sma=75569.56, fear=57, strength=0.0307
+2026-04-19 18:47:49,353 | ERROR | Unable to initialize Binance trading cycle: APIError(code=-2015): Invalid API-key, IP, or permissions for action.

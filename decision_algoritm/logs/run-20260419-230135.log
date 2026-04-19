@@ -1,0 +1,4 @@
+2026-04-19 23:01:37,240 | INFO | Fear and Greed response fetched successfully
+2026-04-19 23:01:37,242 | INFO | Signal=SELL, price=74700.38, sma=75299.67, fear=57, strength=0.0280
+2026-04-19 23:01:38,250 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 23:01:38,251 | INFO | Holding position for this cycle
