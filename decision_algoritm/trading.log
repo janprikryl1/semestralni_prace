@@ -4,3 +4,61 @@
 2026-04-12 23:49:48,926 | INFO | Signal=HOLD, price=71262.03, sma=71214.91785714285, fear=50
 2026-04-15 00:39:15,060 | INFO | Signal=HOLD, price=74004.31, sma=74589.22357142858, fear=54
 2026-04-15 00:39:47,507 | INFO | Signal=HOLD, price=74053.23, sma=74592.71785714287, fear=54
+2026-04-18 17:14:01,059 | INFO | Signal=HOLD, price=76211.28, sma=76677.82571428572, fear=62
+2026-04-18 17:17:22,062 | INFO | Signal=HOLD, price=76262.16, sma=76681.45999999999, fear=62
+2026-04-18 17:18:50,102 | INFO | Signal=HOLD, price=76188.81, sma=76676.22071428572, fear=62
+2026-04-18 17:21:32,276 | INFO | Signal=HOLD, price=76184.26, sma=76675.89571428571, fear=62
+2026-04-18 17:22:49,628 | INFO | Signal=HOLD, price=76199.99, sma=76677.01928571428, fear=62
+2026-04-18 17:26:27,045 | INFO | Signal=HOLD, price=76230.24, sma=76679.18000000001, fear=62
+2026-04-18 19:32:52,102 | INFO | Signal=HOLD, price=75923.57, sma=76499.52285714286, fear=62
+2026-04-18 19:39:12,053 | INFO | Signal=HOLD, price=75922.62, sma=76499.455, fear=62
+2026-04-18 19:39:36,773 | INFO | Signal=HOLD, price=75922.5, sma=76499.44642857143, fear=62
+2026-04-18 19:41:13,337 | INFO | Signal=SELL, price=75921.5, sma=76499.375, fear=62
+2026-04-18 20:41:18,241 | INFO | Signal=SELL, price=75592.37, sma=76383.89714285715, fear=62
+2026-04-18 21:41:26,077 | INFO | Signal=SELL, price=75635.22, sma=76280.83785714286, fear=62
+2026-04-19 10:26:50,351 | INFO | Signal=HOLD, price=75247.21, sma=75619.91357142858, fear=57
+2026-04-19 10:27:47,886 | INFO | Signal=HOLD, price=75246.07, sma=75619.83214285714, fear=57
+2026-04-19 10:37:40,500 | INFO | Signal=HOLD, price=75237.43, sma=75619.215, fear=57
+2026-04-19 10:39:32,336 | INFO | Signal=HOLD, price=75257.34, sma=75620.63714285714, fear=57
+2026-04-19 11:09:38,233 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:09:38,234 | INFO | Signal=HOLD, price=75216.94, sma=75589.05, fear=57, strength=0.0049
+2026-04-19 11:09:39,329 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:09:39,329 | INFO | Holding position for this cycle
+2026-04-19 11:12:36,452 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:12:36,453 | INFO | Signal=HOLD, price=75204.80, sma=75588.19, fear=57, strength=0.0051
+2026-04-19 11:12:37,550 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:12:37,550 | INFO | Holding position for this cycle
+2026-04-19 11:14:09,646 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:14:09,646 | INFO | Signal=SELL, price=75203.76, sma=75588.11, fear=57, strength=0.0251
+2026-04-19 11:14:11,239 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:14:11,239 | INFO | Executing SELL for 0.00001575 BTC
+2026-04-19 11:14:11,493 | INFO | DRY RUN SELL: BTCUSDC, qty=1.6e-05, price=75203.76
+2026-04-19 11:18:11,042 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:18:11,042 | INFO | Signal=SELL, price=75174.69, sma=75586.04, fear=57, strength=0.0254
+2026-04-19 11:18:12,154 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:18:12,154 | INFO | Executing SELL for 0.00001575 BTC
+2026-04-19 11:18:12,409 | INFO | SELL attempt: BTCUSDC, qty=1.6e-05, price=75174.69
+2026-04-19 11:18:12,663 | ERROR | SELL failed: APIError(code=-1100): Illegal characters found in parameter 'quantity'; legal range is '^([0-9]{1,20})(\.[0-9]{1,20})?$'.
+2026-04-19 11:19:21,725 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:19:21,726 | INFO | Signal=SELL, price=75149.56, sma=75584.24, fear=57, strength=0.0258
+2026-04-19 11:19:22,775 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:19:22,775 | INFO | Executing SELL for 0.00001575 BTC
+2026-04-19 11:19:23,034 | WARNING | Skipped SELL: notional 1.2024 below minimum 5.0000
+2026-04-19 11:23:35,468 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:23:35,469 | INFO | Signal=SELL, price=75068.40, sma=75578.44, fear=57, strength=0.0267
+2026-04-19 11:23:36,567 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:23:36,567 | INFO | Executing SELL for 0.00001575 BTC
+2026-04-19 11:23:36,822 | INFO | SELL attempt: BTCUSDC, qty=1.6e-05, price=75074.74
+2026-04-19 11:23:37,076 | ERROR | SELL failed: APIError(code=-1013): Filter failure: LOT_SIZE
+2026-04-19 11:25:15,405 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:25:15,405 | INFO | Signal=SELL, price=75080.56, sma=75579.31, fear=57, strength=0.0266
+2026-04-19 11:25:16,503 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:25:16,503 | INFO | Executing SELL for 0.00001575 BTC
+2026-04-19 11:25:17,369 | INFO | SELL attempt: BTCUSDC, qty=1e-05, price=75080.56
+2026-04-19 11:25:17,620 | ERROR | SELL failed: APIError(code=-1013): Filter failure: NOTIONAL
+2026-04-19 11:28:17,280 | INFO | Fear and Greed response fetched successfully
+2026-04-19 11:28:17,281 | INFO | Signal=SELL, price=75131.89, sma=75582.98, fear=57, strength=0.0260
+2026-04-19 11:28:21,376 | INFO | Balances: USDC=19.4771 BTC=0.00022507
+2026-04-19 11:28:21,377 | INFO | Executing SELL for 0.00013504 BTC
+2026-04-19 11:28:22,236 | INFO | SELL attempt: BTCUSDC, qty=0.00013, price=75136.08
+2026-04-19 11:28:22,493 | INFO | SELL success: {'symbol': 'BTCUSDC', 'orderId': 9027325717, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ7d250e2e7f6a1f0c4836d8', 'transactTime': 1776590901540, 'price': '0.00000000', 'origQty': '0.00013000', 'executedQty': '0.00013000', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '9.76776190', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'SELL', 'workingTime': 1776590901540, 'fills': [{'price': '75136.63000000', 'qty': '0.00013000', 'commission': '0.00001121', 'commissionAsset': 'BNB', 'tradeId': 363929137}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}
