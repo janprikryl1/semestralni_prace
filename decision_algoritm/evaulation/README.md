@@ -1,3 +1,24 @@
-Pro vyhodnocení strategie byla využita data uložená v databázi, která obsahují historii jednotlivých obchodních rozhodnutí a realizovaných transakcí.
+Adresář `evaulation/` slouží k vyhodnocení strategie nad daty uloženými v `trades.db`.
 
-Na základě těchto dat byly vypočteny základní statistiky, jako je počet nákupních a prodejních signálů nebo celkový objem obchodů. Dále byl vytvořen graf znázorňující vývoj cen v čase a jednotlivé obchodní body, což umožňuje vizuální analýzu chování algoritmu.
+Obsah:
+
+- `database_loader.py`
+  načítání rozhodnutí a obchodů z SQLite databáze
+- `statistics.py`
+  výpis základních statistik strategie
+- `graph_data.py`
+  vytvoření grafu s cenou, SMA, sentimentem a úspěšnými obchody
+
+Spuštění statistik:
+
+```bash
+python evaulation/statistics.py
+```
+
+Vygenerování grafu:
+
+```bash
+python evaulation/graph_data.py
+```
+
+Výstupní graf se uloží jako `evaulation/evaluation_plot.png`.

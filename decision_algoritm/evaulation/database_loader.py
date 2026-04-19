@@ -1,33 +1,58 @@
 import sqlite3
+from pathlib import Path
 
-conn = sqlite3.connect("../trades.db")
-cursor = conn.cursor()
 
-cursor.execute("SELECT * FROM trades")
-rows = cursor.fetchall()
+EVALUATION_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = EVALUATION_DIR.parent
+DEFAULT_DB_PATH = PROJECT_ROOT / "trades.db"
 
-for row in rows:
-    print(row)
 
-#statistics
-buy_count = sum(1 for r in rows if r[1] == "BUY")
-sell_count = sum(1 for r in rows if r[1] == "SELL")
+def get_connection(db_path=None):
+    database_path = Path(db_path) if db_path else DEFAULT_DB_PATH
+    return sqlite3.connect(database_path)
 
-print("BUY:", buy_count)
-print("SELL:", sell_count)
 
-#money spent
-total_spent = sum(r[3] * r[4] for r in rows if r[1] == "BUY")
-print("Celkem utraceno:", total_spent)
+def fetch_rows(query, params=None, db_path=None):
+    with get_connection(db_path) as connection:
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
+        cursor.execute(query, params or [])
+        return [dict(row) for row in cursor.fetchall()]
 
-import matplotlib.pyplot as plt
 
-times = [r[0] for r in rows]
-prices = [r[4] for r in rows]
+def load_decisions(db_path=None):
+    return fetch_rows(
+        """
+        SELECT
+            time,
+            signal,
+            price,
+            sma,
+            fear,
+            action_strength,
+            position_size,
+            reason
+        FROM decisions
+        ORDER BY time
+        """,
+        db_path=db_path,
+    )
 
-plt.plot(times, prices)
-plt.xticks(rotation=45)
-plt.title("Vývoj obchodů")
-plt.show()
 
-conn.close()
+def load_trades(db_path=None):
+    return fetch_rows(
+        """
+        SELECT
+            time,
+            side,
+            symbol,
+            quantity,
+            price,
+            status,
+            notional,
+            details
+        FROM trades
+        ORDER BY time
+        """,
+        db_path=db_path,
+    )
