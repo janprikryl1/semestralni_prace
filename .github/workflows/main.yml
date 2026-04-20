@@ -11,6 +11,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      COINMARKETCAP_API_KEY: ${{ secrets.COINMARKETCAP_API_KEY }}
+      API_KEY: ${{ secets.API_KEY }}
+      API_SECRET: ${{ secrets.API_SECRET }}
     defaults:
       run:
         working-directory: decision_algoritm
