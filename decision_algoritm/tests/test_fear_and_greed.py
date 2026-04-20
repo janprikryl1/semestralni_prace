@@ -1,8 +1,6 @@
 import os
-
 import pytest
 import requests
-
 from fear_and_grid_wrapper import get_fear_and_greed
 
 

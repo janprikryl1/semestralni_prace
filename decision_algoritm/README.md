@@ -91,3 +91,15 @@ python main.py
 - Výchozí nastavení používá `dry_run: true`, takže se reálné obchody neodesílají.
 - Před přechodem na live obchodování je potřeba zkontrolovat limity účtu, přesnost množství, `LOT_SIZE` a minimální `NOTIONAL` pro konkrétní symbol na Binance.
 - Projekt je vhodný jako demonstrační nebo semestrální základ, ne jako hotový produkční trading systém.
+
+## Coverage:
+```bash
+python -m coverage report
+```
+Name                       Stmts   Miss  Cover   Missing
+--------------------------------------------------------
+fear_and_grid_wrapper.py      24      7    71%   24-30
+price_data.py                 27      0   100%
+sma.py                         6      0   100%
+--------------------------------------------------------
+TOTAL                         57      7    88%
