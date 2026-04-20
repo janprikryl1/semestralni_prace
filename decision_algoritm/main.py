@@ -9,7 +9,7 @@ from binance.exceptions import BinanceAPIException
 from config_loader import config
 from database import initialize_db, save_decision
 from fear_and_grid_wrapper import get_fear_and_greed
-from new_cm_order import create_client, execute_buy, execute_sell, get_balance
+from new_cm_order import create_client, execute_buy, execute_sell, get_balance, get_buy_order_requirements
 from price_data import get_price_data
 from sma import compute_sma
 
@@ -117,24 +117,69 @@ def evaluate_market():
     }
 
 
+def interpolate_size(value, start, end, start_size, end_size):
+    if start == end:
+        return end_size
+
+    ratio = (value - start) / (end - start)
+    ratio = max(0.0, min(1.0, ratio))
+    return start_size + ratio * (end_size - start_size)
+
+
 def get_buy_amount(fear, quote_balance):
     if fear is None:
         return 0.0
-    if fear < 20:
-        return quote_balance * config["risk_management"]["buy_strong"]
-    if fear < 30:
-        return quote_balance * config["risk_management"]["buy_normal"]
-    return quote_balance * max(0.0, min(config["risk_management"]["buy_normal"], (50 - fear) / 100))
+    risk_config = config["risk_management"]
+    strategy_config = config["strategy"]
+    strong_threshold = risk_config["buy_strong_fear_threshold"]
+    normal_threshold = risk_config["buy_normal_fear_threshold"]
+    buy_threshold = strategy_config["fear_buy_threshold"]
+    strong_size = risk_config["buy_strong"]
+    normal_size = risk_config["buy_normal"]
+
+    if fear < strong_threshold:
+        return quote_balance * strong_size
+    if fear < normal_threshold:
+        return quote_balance * normal_size
+    if fear >= buy_threshold:
+        return 0.0
+
+    size_fraction = interpolate_size(
+        fear,
+        normal_threshold,
+        buy_threshold,
+        normal_size,
+        0.0,
+    )
+    return quote_balance * size_fraction
 
 
 def get_sell_amount(fear, base_balance):
     if fear is None:
         return 0.0
-    if fear > 80:
-        return base_balance * config["risk_management"]["sell_strong"]
-    if fear > 70:
-        return base_balance * config["risk_management"]["sell_normal"]
-    return base_balance * max(config["risk_management"]["sell_normal"], max(0.0, (fear - 50) / 100))
+    risk_config = config["risk_management"]
+    strategy_config = config["strategy"]
+    sell_threshold = strategy_config["fear_sell_threshold"]
+    normal_threshold = risk_config["sell_normal_fear_threshold"]
+    strong_threshold = risk_config["sell_strong_fear_threshold"]
+    normal_size = risk_config["sell_normal"]
+    strong_size = risk_config["sell_strong"]
+
+    if fear > strong_threshold:
+        return base_balance * strong_size
+    if fear > normal_threshold:
+        return base_balance * normal_size
+    if fear <= sell_threshold:
+        return 0.0
+
+    size_fraction = interpolate_size(
+        fear,
+        sell_threshold,
+        normal_threshold,
+        0.0,
+        normal_size,
+    )
+    return base_balance * size_fraction
 
 
 def run_cycle():
@@ -168,8 +213,18 @@ def run_cycle():
         position_size = amount
 
         if amount > 0:
-            logging.info("Executing BUY for %.4f %s", amount, QUOTE_ASSET)
-            execute_buy(client, symbol, amount)
+            requirements = get_buy_order_requirements(client, symbol, evaluation["price"])
+            if amount >= requirements["required_quote"]:
+                logging.info("Executing BUY for %.4f %s", amount, QUOTE_ASSET)
+                execute_buy(client, symbol, amount)
+            else:
+                logging.warning(
+                    "BUY signal generated but computed amount %.4f %s is below exchange minimum %.4f %s",
+                    amount,
+                    QUOTE_ASSET,
+                    requirements["required_quote"],
+                    QUOTE_ASSET,
+                )
         else:
             logging.info("BUY signal generated but computed amount was zero")
 

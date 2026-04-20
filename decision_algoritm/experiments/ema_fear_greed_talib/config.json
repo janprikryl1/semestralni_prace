@@ -1,0 +1,38 @@
+{
+  "trading": {
+    "symbol": "BTCUSDC",
+    "base_asset": "BTC",
+    "quote_asset": "USDC",
+    "hours_back": 200,
+    "interval_seconds": 3600,
+    "dry_run": true,
+    "quantity_precision": 6
+  },
+  "indicators": {
+    "ema_period": 21
+  },
+  "strategy": {
+    "fear_buy_threshold": 45,
+    "fear_sell_threshold": 60
+  },
+  "risk_management": {
+    "buy_strong": 0.3,
+    "buy_normal": 0.15,
+    "sell_strong": 1.0,
+    "sell_normal": 0.5
+  },
+  "limits": {
+    "min_quote_balance": 0.25,
+    "min_base_balance": 0.0001
+  },
+  "logging": {
+    "log_dir": "logs",
+    "combined_log_file": "ema_fng.log",
+    "session_log_template": "run-{timestamp}.log",
+    "backup_count": 14,
+    "level": "INFO"
+  },
+  "database": {
+    "db_file": "ema_fng_trades.db"
+  }
+}

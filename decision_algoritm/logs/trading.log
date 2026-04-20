@@ -14,3 +14,49 @@
 2026-04-19 13:41:58,848 | INFO | Signal=SELL, price=75508.66, sma=75513.64, fear=57, strength=0.0201
 2026-04-19 13:41:59,932 | INFO | Balances: USDC=29.2449 BTC=0.00009507
 2026-04-19 13:41:59,932 | INFO | Holding position for this cycle
+2026-04-19 14:42:04,502 | INFO | Fear and Greed response fetched successfully
+2026-04-19 14:42:04,502 | INFO | Signal=BUY, price=75507.52, sma=75498.21, fear=57, strength=0.0301
+2026-04-19 14:42:05,652 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 14:42:05,652 | INFO | BUY signal generated but computed amount was zero
+2026-04-19 14:58:59,213 | INFO | Fear and Greed response fetched successfully
+2026-04-19 14:58:59,214 | INFO | Signal=BUY, price=75638.04, sma=75507.53, fear=57, strength=0.0317
+2026-04-19 14:59:00,332 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 14:59:00,332 | INFO | Executing BUY for 0.4387 USDC
+2026-04-19 14:59:01,209 | WARNING | Skipped BUY: computed quantity is below Binance LOT_SIZE minimum
+2026-04-19 15:04:01,631 | INFO | Fear and Greed response fetched successfully
+2026-04-19 15:04:01,632 | INFO | Signal=BUY, price=75718.38, sma=75504.85, fear=57, strength=0.0328
+2026-04-19 15:04:02,739 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 15:04:03,345 | WARNING | BUY signal generated but computed amount 0.4387 USDC is below exchange minimum 5.0000 USDC
+2026-04-19 15:25:42,018 | INFO | Fear and Greed response fetched successfully
+2026-04-19 15:25:42,019 | INFO | Signal=BUY, price=76086.80, sma=75531.17, fear=57, strength=0.0374
+2026-04-19 15:25:43,138 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 15:25:43,731 | WARNING | BUY signal generated but computed amount 0.4387 USDC is below exchange minimum 5.0000 USDC
+2026-04-19 18:47:48,276 | INFO | Fear and Greed response fetched successfully
+2026-04-19 18:47:48,277 | INFO | Signal=BUY, price=75623.33, sma=75569.56, fear=57, strength=0.0307
+2026-04-19 18:47:49,353 | ERROR | Unable to initialize Binance trading cycle: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
+2026-04-19 18:53:24,096 | INFO | Fear and Greed response fetched successfully
+2026-04-19 18:53:24,097 | INFO | Signal=BUY, price=75588.13, sma=75567.05, fear=57, strength=0.0303
+2026-04-19 18:53:26,148 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 18:53:27,522 | INFO | Raised BUY amount from 0.4387 USDC to exchange minimum 5.0000 USDC
+2026-04-19 18:53:27,532 | INFO | Executing BUY for 5.0000 USDC
+2026-04-19 18:53:32,106 | WARNING | Skipped BUY: adjusted notional 4.5342 USDC is below exchange minimum 5.0000 USDC
+2026-04-19 22:46:14,006 | INFO | Fear and Greed response fetched successfully
+2026-04-19 22:46:14,007 | INFO | Signal=SELL, price=74600.70, sma=75337.20, fear=57, strength=0.0298
+2026-04-19 22:46:15,039 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 22:46:15,039 | INFO | Holding position for this cycle
+2026-04-19 22:47:42,028 | INFO | Fear and Greed response fetched successfully
+2026-04-19 22:47:42,029 | INFO | Signal=SELL, price=74611.56, sma=75337.97, fear=57, strength=0.0296
+2026-04-19 22:47:43,029 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 22:47:43,030 | INFO | Holding position for this cycle
+2026-04-19 22:51:33,653 | INFO | Fear and Greed response fetched successfully
+2026-04-19 22:51:33,654 | INFO | Signal=SELL, price=74655.60, sma=75341.12, fear=57, strength=0.0291
+2026-04-19 22:51:34,651 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 22:51:34,652 | INFO | Holding position for this cycle
+2026-04-19 23:01:37,240 | INFO | Fear and Greed response fetched successfully
+2026-04-19 23:01:37,242 | INFO | Signal=SELL, price=74700.38, sma=75299.67, fear=57, strength=0.0280
+2026-04-19 23:01:38,250 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 23:01:38,251 | INFO | Holding position for this cycle
+2026-04-19 23:06:49,886 | INFO | Fear and Greed response fetched successfully
+2026-04-19 23:06:49,887 | INFO | Signal=SELL, price=74741.50, sma=75302.61, fear=57, strength=0.0275
+2026-04-19 23:06:50,891 | INFO | Balances: USDC=29.2449 BTC=0.00009507
+2026-04-19 23:06:50,891 | INFO | Holding position for this cycle

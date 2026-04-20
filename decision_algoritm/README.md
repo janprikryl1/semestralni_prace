@@ -1,5 +1,7 @@
 # Algorithmic Trading Bot for Binance
 
+## SM + fear and greed index trading bot
+
 Projekt implementuje jednoduchého algoritmického trading bota v Pythonu pro obchodování kryptoměnového páru `BTCUSDC` přes Binance API. Návrh kombinuje technickou a fundamentální analýzu a v pravidelném intervalu vyhodnocuje, zda má dojít k nákupu, prodeji, nebo držení pozice.
 
 ## Použitá logika
@@ -56,8 +58,19 @@ V `config.json` lze upravit:
 - délku intervalu mezi běhy
 - prahy Fear and Greed pro `BUY` a `SELL`
 - procenta portfolia použitá pro position sizing
+- hranice sentimentu pro silnější a běžný `BUY`/`SELL` sizing v sekci `risk_management`
+- minimální zůstatky pro aktivaci `BUY` a `SELL` v sekci `limits`
 - zapnutí nebo vypnutí `dry_run`
 - umístění a retenci logů
+
+### Limity Binance Spot
+
+Při reálném obchodování nestačí pouze interní limity z `config.json`. Každý spot order na Binance musí zároveň projít filtry konkrétního symbolu:
+
+- `LOT_SIZE`: minimální množství v base assetu a krok množství
+- `NOTIONAL` nebo `MIN_NOTIONAL`: minimální hodnota orderu v quote assetu
+
+To znamená, že strategie může vygenerovat platný `BUY` nebo `SELL` signál, ale objednávka se přesto neprovede, pokud je vypočtená velikost obchodu příliš malá pro daný symbol. Velikost obchodů je proto vhodné ladit přes `config.json`, zejména v sekcích `risk_management` a `limits`, ne přes umělé dorovnávání objednávek v exekuční vrstvě.
 
 ## Spuštění
 
@@ -76,5 +89,5 @@ python main.py
 ## Poznámky k bezpečnosti
 
 - Výchozí nastavení používá `dry_run: true`, takže se reálné obchody neodesílají.
-- Před přechodem na live obchodování je potřeba zkontrolovat limity účtu, přesnost množství a minimální notional pro konkrétní symbol na Binance.
+- Před přechodem na live obchodování je potřeba zkontrolovat limity účtu, přesnost množství, `LOT_SIZE` a minimální `NOTIONAL` pro konkrétní symbol na Binance.
 - Projekt je vhodný jako demonstrační nebo semestrální základ, ne jako hotový produkční trading systém.

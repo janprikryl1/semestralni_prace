@@ -19,13 +19,17 @@
     "fear_sell_threshold": 55
   },
   "risk_management": {
-    "buy_strong": 0.3,
-    "buy_normal": 0.15,
+    "buy_strong_fear_threshold": 20,
+    "buy_normal_fear_threshold": 56,
+    "sell_normal_fear_threshold": 60,
+    "sell_strong_fear_threshold": 80,
+    "buy_strong": 0.4,
+    "buy_normal": 0.25,
     "sell_strong": 1.0,
-    "sell_normal": 0.6
+    "sell_normal": 0.8
   },
   "limits": {
-    "min_quote_balance": 0.25,
+    "min_quote_balance": 6.0,
     "min_base_balance": 0.0001,
     "min_balance": 0.0001
   },
