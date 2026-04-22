@@ -24,7 +24,7 @@
     "sell_normal_fear_threshold": 60,
     "sell_strong_fear_threshold": 80,
     "buy_strong": 0.4,
-    "buy_normal": 0.25,
+    "buy_normal": 0.26,
     "sell_strong": 1.0,
     "sell_normal": 0.8
   },

@@ -2,27 +2,18 @@
 
 ## SM + fear and greed index trading bot
 
-Projekt implementuje jednoduchého algoritmického trading bota v Pythonu pro obchodování kryptoměnového páru `BTCUSDC` přes Binance API. Návrh kombinuje technickou a fundamentální analýzu a v pravidelném intervalu vyhodnocuje, zda má dojít k nákupu, prodeji, nebo držení pozice.
+Algoritmický trading bot pro obchodování daného kryptoměnového páru přes Binance API. Návrh kombinuje **technickou** a **fundamentální** analýzu a v pravidelném intervalu vyhodnocuje, zda má dojít k nákupu, prodeji, nebo držení pozice.
 
 ## Použitá logika
 
-- Technická analýza: Simple Moving Average (`SMA`) nad hodinovými cenami z Binance.
-- Fundamentální analýza: index Fear and Greed z CoinMarketCap API.
+- Technická analýza: Simple Moving Average (`SMA`) nad cenami z Binance (Když je cena nad SMA, naznačuje to rostoucí trend; pod ním naznačuje to klesající trend).
+- Fundamentální analýza: Fear and Greed index.
 - Výstup strategie:
   - `BUY`: cena je nad SMA a trh je ve strachu
   - `SELL`: cena je pod SMA a trh je příliš chamtivý
   - `HOLD`: signály nejsou v souladu nebo chybí data
 
 Síla signálu je odvozena z kombinace odchylky ceny od SMA a intenzity sentimentu. Na jejím základě se počítá velikost pozice.
-
-## Hlavní vlastnosti
-
-- pravidelné spouštění strategie, standardně každou hodinu
-- řízení velikosti pozice podle sentimentu trhu
-- práce s reálným portfoliem `USDC` a `BTC`
-- režim `dry_run`, ve kterém se obchody pouze simulují
-- logování do adresáře `logs/`, včetně průběžného logu a samostatného logu pro každé spuštění
-- ukládání rozhodnutí a obchodů do databáze SQLite `trades.db`
 
 ## Struktura projektu
 
@@ -35,7 +26,7 @@ Síla signálu je odvozena z kombinace odchylky ceny od SMA a intenzity sentimen
 - `new_cm_order.py`:
   práce s Binance účtem, zůstatky a exekuce objednávek
 - `database.py`:
-  inicializace SQLite databáze a ukládání auditních záznamů
+  inicializace SQLite databáze a ukládání záznamů
 - `config.json`:
   parametry strategie, limity a provozní nastavení
 - `logs/`:
@@ -43,8 +34,7 @@ Síla signálu je odvozena z kombinace odchylky ceny od SMA a intenzity sentimen
 
 ## Konfigurace
 
-Do souboru `.env` je potřeba doplnit:
-
+Do souboru `.env` je potřeba doplnit API klíče:
 ```env
 API_KEY=your_binance_api_key
 API_SECRET=your_binance_api_secret
