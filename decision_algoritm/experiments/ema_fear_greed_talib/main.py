@@ -162,6 +162,7 @@ def run_cycle():
 
     save_decision(
         signal,
+        symbol,
         evaluation["price"],
         evaluation["ema"],
         evaluation["fear"],

@@ -2,4 +2,5 @@ TA-Lib
 numpy
 python-binance
 python-dotenv
+mysql-connector-python
 requests

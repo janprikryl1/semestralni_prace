@@ -1,0 +1,4 @@
+2026-04-23 21:30:43,700 | INFO | Fear and Greed response fetched successfully
+2026-04-23 21:30:43,712 | INFO | Signal=SELL, price=77903.43, ema=77982.45, fear=61
+2026-04-23 21:30:44,210 | INFO | Balances: USDC=33.8540 BTC=0.00003507
+2026-04-23 21:30:44,210 | INFO | Holding position for this cycle

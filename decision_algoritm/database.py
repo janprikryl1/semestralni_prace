@@ -1,116 +1,69 @@
-import sqlite3
 import datetime
-from config_loader import config
+import os
+import mysql.connector
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TRADING_TYPE = "SMA_FG"
 
 
-def ensure_column(cursor, table_name, column_name, column_definition):
-    cursor.execute(f"PRAGMA table_info({table_name})")
-    existing_columns = {column[1] for column in cursor.fetchall()}
-    if column_name not in existing_columns:
-        cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_definition}")
+def _connect():
+    return mysql.connector.connect(
+        host=os.getenv("MYSQL_HOST", "localhost"),
+        port=int(os.getenv("MYSQL_PORT", 3306)),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE"),
+    )
 
 
 def initialize_db():
-    conn = sqlite3.connect(config['database']['db_file'])
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS decisions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        time TEXT,
-        signal TEXT,
-        price REAL,
-        sma REAL,
-        fear INTEGER,
-        action_strength REAL,
-        position_size REAL,
-        reason TEXT
-    )
-    """)
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS trades (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        time TEXT,
-        side TEXT,
-        symbol TEXT,
-        quantity REAL,
-        price REAL,
-        notional REAL,
-        status TEXT,
-        details TEXT
-    )
-    """)
-
-    ensure_column(cursor, "decisions", "action_strength", "REAL")
-    ensure_column(cursor, "decisions", "position_size", "REAL")
-    ensure_column(cursor, "decisions", "reason", "TEXT")
-
-    ensure_column(cursor, "trades", "notional", "REAL")
-    ensure_column(cursor, "trades", "details", "TEXT")
-
-    conn.commit()
-    conn.close()
+    pass
 
 
-def save_decision(signal, price, sma, fear, action_strength, position_size, reason):
-    conn = sqlite3.connect(config['database']['db_file'])
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    INSERT INTO decisions (
-        time,
-        signal,
-        price,
-        sma,
-        fear,
-        action_strength,
-        position_size,
-        reason
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        signal,
-        price,
-        sma,
-        fear,
-        action_strength,
-        position_size,
-        reason
-    ))
-
-    conn.commit()
-    conn.close()
+def save_decision(signal, symbol, price, sma, fear, action_strength, position_size, reason):
+    with _connect() as conn:
+        conn.cursor().execute(
+            """
+            INSERT INTO decisions
+                (time, trading_type, `signal`, symbol, price, sma, fear, action_strength, position_size, reason)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                datetime.datetime.now(),
+                TRADING_TYPE,
+                signal,
+                symbol,
+                price,
+                sma,
+                fear,
+                action_strength,
+                position_size,
+                reason,
+            ),
+        )
+        conn.commit()
 
 
 def save_trade(side, symbol, quantity, price, notional, status, details):
-    conn = sqlite3.connect(config['database']['db_file'])
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    INSERT INTO trades (
-        time,
-        side,
-        symbol,
-        quantity,
-        price,
-        notional,
-        status,
-        details
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        side,
-        symbol,
-        quantity,
-        price,
-        notional,
-        status,
-        details
-    ))
-
-    conn.commit()
-    conn.close()
-
-# Initialize database when this module is imported
-initialize_db()
+    with _connect() as conn:
+        conn.cursor().execute(
+            """
+            INSERT INTO trades
+                (time, trading_type, side, symbol, quantity, price, notional, status, details)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                datetime.datetime.now(),
+                TRADING_TYPE,
+                side,
+                symbol,
+                quantity,
+                price,
+                notional,
+                status,
+                details,
+            ),
+        )
+        conn.commit()

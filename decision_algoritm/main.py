@@ -156,6 +156,7 @@ def run_cycle():
         logging.error("Unable to initialize Binance trading cycle: %s", exc)
         save_decision(
             signal,
+            symbol,
             evaluation["price"],
             evaluation["sma"],
             evaluation["fear"],
@@ -202,6 +203,7 @@ def run_cycle():
 
     save_decision(
         signal,
+        symbol,
         evaluation["price"],
         evaluation["sma"],
         evaluation["fear"],
