@@ -1,9 +1,7 @@
-2026-04-26 22:56:35,209 | INFO | Fear and Greed response fetched successfully
-2026-04-26 22:56:35,213 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=44
-2026-04-26 22:56:35,211 | INFO | Balances: USDC=33.8540 TRX=0.00000000
-2026-04-26 22:56:35,214 | INFO | Holding position for this cycle
-2026-04-26 22:56:35,707 | INFO | Balances: USDC=33.8540 PEPE=0.00000000
-2026-04-26 22:56:35,707 | ERROR | Unexpected error in trading loop: 'buy_strong_fear_threshold'
+2026-04-26 23:07:51,593 | INFO | Fear and Greed response fetched successfully
+2026-04-26 23:07:51,594 | INFO | Signal=BUY, price=1.43, ema=1.43, fear=44
+2026-04-26 23:07:52,134 | INFO | Balances: USDC=3.7849 XRP=6.10000000
+2026-04-26 23:07:52,134 | ERROR | Unexpected error in trading loop: 'buy_strong_fear_threshold'
 Traceback (most recent call last):
   File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 208, in main
     run_cycle(symbol, base_asset, quote_asset)

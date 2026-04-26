@@ -1,0 +1,28 @@
+2026-04-26 22:57:09,368 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:57:09,374 | INFO | Signal=BUY, price=1.43, sma=1.43, fear=44, strength=0.1604
+2026-04-26 22:57:09,585 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:57:09,591 | INFO | Signal=BUY, price=454.10, sma=452.69, fear=44, strength=0.1631
+2026-04-26 22:57:09,617 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:57:09,633 | INFO | Signal=HOLD, price=0.32, sma=0.32, fear=44, strength=0.0003
+2026-04-26 22:57:09,661 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:57:09,668 | INFO | Signal=BUY, price=0.00, sma=0.00, fear=44, strength=0.1631
+2026-04-26 22:57:09,776 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:57:09,778 | INFO | Signal=BUY, price=0.00, sma=0.00, fear=44, strength=0.1629
+2026-04-26 22:57:10,398 | INFO | Balances: USDC=33.8540 XRP=0.00000000
+2026-04-26 22:57:10,607 | INFO | Balances: USDC=33.8540 BCH=0.00000000
+2026-04-26 22:57:10,653 | INFO | Balances: USDC=33.8540 TRX=0.00000000
+2026-04-26 22:57:10,655 | INFO | Holding position for this cycle
+2026-04-26 22:57:10,666 | INFO | Balances: USDC=33.8540 PEPE=0.00000000
+2026-04-26 22:57:10,805 | INFO | Balances: USDC=33.8540 SHIB=0.00000000
+2026-04-26 22:57:11,101 | INFO | Executing BUY for 8.8020 USDC
+2026-04-26 22:57:11,271 | INFO | Executing BUY for 8.8020 USDC
+2026-04-26 22:57:11,278 | INFO | Executing BUY for 8.8020 USDC
+2026-04-26 22:57:11,433 | INFO | Executing BUY for 8.8020 USDC
+2026-04-26 22:57:12,611 | INFO | BUY attempt: XRPUSDC, USDC=8.8020416328, qty=6.1, price=1.4285
+2026-04-26 22:57:12,699 | INFO | BUY attempt: PEPEUSDC, USDC=8.8020416328, qty=2245418.0, price=3.92e-06
+2026-04-26 22:57:12,862 | INFO | BUY success: {'symbol': 'XRPUSDC', 'orderId': 3347657349, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ27b775b5f384bb932f24cb', 'transactTime': 1777237032840, 'price': '0.00000000', 'origQty': '6.10000000', 'executedQty': '6.10000000', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '8.71385000', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'workingTime': 1777237032840, 'fills': [{'price': '1.42850000', 'qty': '6.10000000', 'commission': '0.00000977', 'commissionAsset': 'BNB', 'tradeId': 137142246}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}
+2026-04-26 22:57:12,947 | ERROR | BUY failed: APIError(code=-1111): Parameter 'quantity' has too much precision.
+2026-04-26 22:57:13,015 | INFO | BUY attempt: BCHUSDC, USDC=8.8020416328, qty=0.019, price=454.1
+2026-04-26 22:57:13,123 | INFO | BUY attempt: SHIBUSDC, USDC=8.8020416328, qty=1415119.0, price=6.22e-06
+2026-04-26 22:57:13,264 | INFO | BUY success: {'symbol': 'BCHUSDC', 'orderId': 436615773, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ1da887d5591ee65d00ff66', 'transactTime': 1777237033243, 'price': '0.00000000', 'origQty': '0.01900000', 'executedQty': '0.01900000', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '8.62790000', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'workingTime': 1777237033243, 'fills': [{'price': '454.10000000', 'qty': '0.01900000', 'commission': '0.00000966', 'commissionAsset': 'BNB', 'tradeId': 14161257}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}
+2026-04-26 22:57:13,370 | ERROR | BUY failed: APIError(code=-1111): Parameter 'quantity' has too much precision.

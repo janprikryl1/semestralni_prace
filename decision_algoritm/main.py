@@ -10,11 +10,22 @@ from price_data import get_price_data
 from sma import compute_sma
 from logging_init import setup_logging
 
-BASE_ASSET = config["trading"].get("base_asset", "BTC")
-QUOTE_ASSET = config["trading"].get("quote_asset", "USDC")
+_KNOWN_QUOTE_ASSETS = ["USDC", "USDT", "BUSD", "TUSD", "BNB", "ETH", "BTC"]
 
-def evaluate_market():
-    prices = get_price_data()
+def parse_symbol(symbol: str) -> tuple:
+    for quote in _KNOWN_QUOTE_ASSETS:
+        if symbol.endswith(quote):
+            base = symbol[:-len(quote)]
+            if base:
+                return base, quote
+    raise ValueError(
+        f"Cannot determine base/quote from symbol '{symbol}'. "
+        f"Known quote assets: {', '.join(_KNOWN_QUOTE_ASSETS)}"
+    )
+
+
+def evaluate_market(symbol):
+    prices = get_price_data(symbol)
     if len(prices) < config["indicators"]["sma_period"]:
         logging.warning("Not enough price data for SMA evaluation")
         return {
@@ -63,7 +74,7 @@ def evaluate_market():
         current_price,
         sma,
         fear,
-        strength
+        strength,
     )
 
     return {
@@ -141,17 +152,16 @@ def get_sell_amount(fear, base_balance):
     return base_balance * size_fraction
 
 
-def run_cycle():
+def run_cycle(symbol, base_asset, quote_asset):
     initialize_db()
-    evaluation = evaluate_market()
+    evaluation = evaluate_market(symbol)
     signal = evaluation["signal"]
-    symbol = config["trading"]["symbol"]
     position_size = 0.0
 
     try:
         client = create_client()
-        quote_balance = get_balance(client, QUOTE_ASSET)
-        base_balance = get_balance(client, BASE_ASSET)
+        quote_balance = get_balance(client, quote_asset)
+        base_balance = get_balance(client, base_asset)
     except (RuntimeError, BinanceAPIException, KeyError, TypeError, ValueError) as exc:
         logging.error("Unable to initialize Binance trading cycle: %s", exc)
         save_decision(
@@ -166,7 +176,7 @@ def run_cycle():
         )
         return "HOLD"
 
-    logging.info("Balances: %s=%.4f %s=%.8f", QUOTE_ASSET, quote_balance, BASE_ASSET, base_balance)
+    logging.info("Balances: %s=%.4f %s=%.8f", quote_asset, quote_balance, base_asset, base_balance)
 
     if signal == "BUY" and quote_balance > config["limits"]["min_quote_balance"]:
         amount = get_buy_amount(evaluation["fear"], quote_balance)
@@ -175,15 +185,15 @@ def run_cycle():
         if amount > 0:
             requirements = get_buy_order_requirements(client, symbol, evaluation["price"])
             if amount >= requirements["required_quote"]:
-                logging.info("Executing BUY for %.4f %s", amount, QUOTE_ASSET)
-                execute_buy(client, symbol, amount)
+                logging.info("Executing BUY for %.4f %s", amount, quote_asset)
+                execute_buy(client, symbol, amount, quote_asset)
             else:
                 logging.warning(
                     "BUY signal generated but computed amount %.4f %s is below exchange minimum %.4f %s",
                     amount,
-                    QUOTE_ASSET,
+                    quote_asset,
                     requirements["required_quote"],
-                    QUOTE_ASSET,
+                    quote_asset,
                 )
         else:
             logging.info("BUY signal generated but computed amount was zero")
@@ -193,8 +203,8 @@ def run_cycle():
         position_size = amount
 
         if amount > 0:
-            logging.info("Executing SELL for %.8f %s", amount, BASE_ASSET)
-            execute_sell(client, symbol, amount)
+            logging.info("Executing SELL for %.8f %s", amount, base_asset)
+            execute_sell(client, symbol, amount, quote_asset)
         else:
             logging.info("SELL signal generated but computed amount was zero")
 
@@ -215,24 +225,31 @@ def run_cycle():
 
 
 def main():
-    setup_logging()
     parser = argparse.ArgumentParser(description="Simple Binance algorithmic trading bot")
     parser.add_argument(
         "--once",
         action="store_true",
         help="Run a single evaluation cycle and exit"
     )
+    parser.add_argument(
+        "--symbol",
+        required=True,
+        help="Trading pair symbol, e.g. BTCUSDC or ETHUSDT"
+    )
     args = parser.parse_args()
 
+    symbol = args.symbol.upper()
+    base_asset, quote_asset = parse_symbol(symbol)
+    setup_logging(symbol)
     interval_seconds = config["trading"].get("interval_seconds", 3600)
 
     if args.once:
-        run_cycle()
+        run_cycle(symbol, base_asset, quote_asset)
         return
 
     while True:
         try:
-            run_cycle()
+            run_cycle(symbol, base_asset, quote_asset)
         except Exception as exc:
             logging.exception("Unexpected error in trading loop: %s", exc)
         time.sleep(interval_seconds)

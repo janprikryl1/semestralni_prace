@@ -19,8 +19,7 @@ def create_client():
     return client
 
 
-def get_price_data(client):
-    symbol = config["trading"]["symbol"]
+def get_price_data(client, symbol):
     hours_back = config["trading"]["hours_back"]
 
     try:

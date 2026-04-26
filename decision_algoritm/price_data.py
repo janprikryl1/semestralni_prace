@@ -8,7 +8,6 @@ import logging
 
 load_dotenv()
 
-SYMBOL = config['trading']['symbol']
 HOURS_BACK = config['trading']['hours_back']
 
 
@@ -23,11 +22,11 @@ def create_client():
     return client
 
 
-def get_price_data():
+def get_price_data(symbol):
     client = create_client()
     try:
         klines = client.get_historical_klines(
-            SYMBOL,
+            symbol,
             Client.KLINE_INTERVAL_1HOUR,
             f"{HOURS_BACK} hours ago UTC"
         )

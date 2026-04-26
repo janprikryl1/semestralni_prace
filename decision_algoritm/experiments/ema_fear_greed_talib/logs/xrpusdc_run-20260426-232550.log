@@ -1,0 +1,4 @@
+2026-04-26 23:25:52,418 | INFO | Fear and Greed response fetched successfully
+2026-04-26 23:25:52,420 | INFO | Signal=BUY, price=1.43, ema=1.43, fear=44
+2026-04-26 23:25:52,916 | INFO | Balances: USDC=3.7849 XRP=6.10000000
+2026-04-26 23:25:53,742 | WARNING | BUY signal generated but computed amount 0.5677 USDC is below exchange minimum 5.0050 USDC

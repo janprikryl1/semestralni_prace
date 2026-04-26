@@ -1,0 +1,60 @@
+2026-04-26 22:56:34,668 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:56:34,673 | INFO | Signal=HOLD, price=0.32, ema=0.32, fear=44
+2026-04-26 22:56:34,780 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:56:34,783 | INFO | Signal=BUY, price=1.43, ema=1.43, fear=44
+2026-04-26 22:56:34,789 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:56:34,794 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=44
+2026-04-26 22:56:34,841 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:56:34,851 | INFO | Signal=BUY, price=454.00, ema=452.92, fear=44
+2026-04-26 22:56:35,209 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:56:35,213 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=44
+2026-04-26 22:56:35,211 | INFO | Balances: USDC=33.8540 TRX=0.00000000
+2026-04-26 22:56:35,214 | INFO | Holding position for this cycle
+2026-04-26 22:56:35,315 | INFO | Balances: USDC=33.8540 SHIB=0.00000000
+2026-04-26 22:56:35,315 | INFO | Balances: USDC=33.8540 XRP=0.00000000
+2026-04-26 22:56:35,319 | ERROR | Unexpected error in trading loop: 'buy_strong_fear_threshold'
+Traceback (most recent call last):
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 208, in main
+    run_cycle(symbol, base_asset, quote_asset)
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 150, in run_cycle
+    amount = get_buy_amount(evaluation["fear"], quote_balance)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 88, in get_buy_amount
+    strong_threshold = risk_config["buy_strong_fear_threshold"]
+                       ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'buy_strong_fear_threshold'
+2026-04-26 22:56:35,320 | ERROR | Unexpected error in trading loop: 'buy_strong_fear_threshold'
+Traceback (most recent call last):
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 208, in main
+    run_cycle(symbol, base_asset, quote_asset)
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 150, in run_cycle
+    amount = get_buy_amount(evaluation["fear"], quote_balance)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 88, in get_buy_amount
+    strong_threshold = risk_config["buy_strong_fear_threshold"]
+                       ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'buy_strong_fear_threshold'
+2026-04-26 22:56:35,460 | INFO | Balances: USDC=33.8540 BCH=0.00000000
+2026-04-26 22:56:35,463 | ERROR | Unexpected error in trading loop: 'buy_strong_fear_threshold'
+Traceback (most recent call last):
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 208, in main
+    run_cycle(symbol, base_asset, quote_asset)
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 150, in run_cycle
+    amount = get_buy_amount(evaluation["fear"], quote_balance)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 88, in get_buy_amount
+    strong_threshold = risk_config["buy_strong_fear_threshold"]
+                       ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'buy_strong_fear_threshold'
+2026-04-26 22:56:35,707 | INFO | Balances: USDC=33.8540 PEPE=0.00000000
+2026-04-26 22:56:35,707 | ERROR | Unexpected error in trading loop: 'buy_strong_fear_threshold'
+Traceback (most recent call last):
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 208, in main
+    run_cycle(symbol, base_asset, quote_asset)
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 150, in run_cycle
+    amount = get_buy_amount(evaluation["fear"], quote_balance)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 88, in get_buy_amount
+    strong_threshold = risk_config["buy_strong_fear_threshold"]
+                       ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'buy_strong_fear_threshold'

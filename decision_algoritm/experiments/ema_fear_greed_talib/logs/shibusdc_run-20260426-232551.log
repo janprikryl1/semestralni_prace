@@ -1,0 +1,4 @@
+2026-04-26 23:25:53,166 | INFO | Fear and Greed response fetched successfully
+2026-04-26 23:25:53,168 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=44
+2026-04-26 23:25:53,671 | INFO | Balances: USDC=3.7849 SHIB=330879.00000000
+2026-04-26 23:25:54,367 | WARNING | BUY signal generated but computed amount 0.5677 USDC is below exchange minimum 1.0000 USDC

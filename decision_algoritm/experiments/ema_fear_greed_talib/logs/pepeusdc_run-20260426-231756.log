@@ -1,0 +1,30 @@
+2026-04-26 23:17:58,408 | INFO | Fear and Greed response fetched successfully
+2026-04-26 23:17:58,409 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=44
+2026-04-26 23:17:58,657 | ERROR | Unexpected error in trading loop: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
+Traceback (most recent call last):
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 208, in main
+    run_cycle(symbol, base_asset, quote_asset)
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\main.py", line 145, in run_cycle
+    quote_balance = get_balance(client, quote_asset)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\experiments\ema_fear_greed_talib\order_executor.py", line 10, in get_balance
+    info = client.get_asset_balance(asset=asset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 2270, in get_asset_balance
+    res = self.get_account(**params)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 2245, in get_account
+    return self._get("account", True, data=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 185, in _get
+    return self._request_api("get", path, signed, version, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 119, in _request_api
+    return self._request(method, uri, signed, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 91, in _request
+    return self._handle_response(self.response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 100, in _handle_response
+    raise BinanceAPIException(response, response.status_code, response.text)
+binance.exceptions.BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action.

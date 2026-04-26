@@ -1,0 +1,6 @@
+2026-04-26 22:57:09,211 | INFO | Fear and Greed response fetched successfully
+2026-04-26 22:57:09,219 | INFO | Signal=BUY, price=78269.31, sma=78086.62, fear=44, strength=0.1623
+2026-04-26 22:57:10,221 | INFO | Balances: USDC=33.8540 BTC=0.00003507
+2026-04-26 22:57:10,896 | INFO | Executing BUY for 8.8020 USDC
+2026-04-26 22:57:12,407 | INFO | BUY attempt: BTCUSDC, USDC=8.8020416328, qty=0.00011, price=78269.31
+2026-04-26 22:57:12,661 | INFO | BUY success: {'symbol': 'BTCUSDC', 'orderId': 9099391213, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ7808b4d885da4f5d7d69f5', 'transactTime': 1777237032637, 'price': '0.00000000', 'origQty': '0.00011000', 'executedQty': '0.00011000', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '8.60932710', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'workingTime': 1777237032637, 'fills': [{'price': '78266.61000000', 'qty': '0.00011000', 'commission': '0.00000924', 'commissionAsset': 'BNB', 'tradeId': 366691723}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}

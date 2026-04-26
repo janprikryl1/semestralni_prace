@@ -3,8 +3,6 @@ from decimal import Decimal, ROUND_DOWN, ROUND_UP
 from config_loader import config
 from database import save_trade
 
-BASE_ASSET = config["trading"]["base_asset"]
-QUOTE_ASSET = config["trading"]["quote_asset"]
 DRY_RUN = config["trading"].get("dry_run", True)
 ORDER_DECIMALS = config["trading"].get("quantity_precision", 6)
 
@@ -87,15 +85,15 @@ def adjust_quantity_to_lot_size(client, symbol, quantity):
     return float(adjusted_quantity)
 
 
-def execute_buy(client, symbol, quote_amount):
+def execute_buy(client, symbol, quote_amount, quote_asset):
     ticker = client.get_symbol_ticker(symbol=symbol)
     price = float(ticker["price"])
     requirements = get_buy_order_requirements(client, symbol, price)
 
     if quote_amount < requirements["required_quote"]:
         reason = (
-            f"Skipped BUY: quote amount {quote_amount:.4f} {QUOTE_ASSET} "
-            f"is below exchange minimum {requirements['required_quote']:.4f} {QUOTE_ASSET}"
+            f"Skipped BUY: quote amount {quote_amount:.4f} {quote_asset} "
+            f"is below exchange minimum {requirements['required_quote']:.4f} {quote_asset}"
         )
         logging.warning(reason)
         save_trade("BUY", symbol, 0.0, price, 0.0, "SKIPPED", reason)
@@ -112,8 +110,8 @@ def execute_buy(client, symbol, quote_amount):
 
     if requirements["min_notional"] > 0 and notional < requirements["min_notional"]:
         reason = (
-            f"Skipped BUY: adjusted notional {notional:.4f} {QUOTE_ASSET} "
-            f"is below exchange minimum {requirements['min_notional']:.4f} {QUOTE_ASSET}"
+            f"Skipped BUY: adjusted notional {notional:.4f} {quote_asset} "
+            f"is below exchange minimum {requirements['min_notional']:.4f} {quote_asset}"
         )
         logging.warning(reason)
         save_trade("BUY", symbol, quantity, price, notional, "SKIPPED", reason)
@@ -122,13 +120,13 @@ def execute_buy(client, symbol, quote_amount):
     formatted_quantity = format_quantity(quantity)
 
     if DRY_RUN:
-        logging.info("DRY RUN BUY: %s, %s=%s, qty=%s, price=%s", symbol, QUOTE_ASSET, quote_amount, quantity, price)
+        logging.info("DRY RUN BUY: %s, %s=%s, qty=%s, price=%s", symbol, quote_asset, quote_amount, quantity, price)
         simulated_order = {"mode": "DRY_RUN", "side": "BUY", "symbol": symbol, "quantity": quantity, "price": price}
         save_trade("BUY", symbol, quantity, price, notional, "SIMULATED", str(simulated_order))
         return simulated_order
 
     try:
-        logging.info("BUY attempt: %s, %s=%s, qty=%s, price=%s", symbol, QUOTE_ASSET, quote_amount, quantity, price)
+        logging.info("BUY attempt: %s, %s=%s, qty=%s, price=%s", symbol, quote_asset, quote_amount, quantity, price)
         order = client.order_market_buy(symbol=symbol, quantity=formatted_quantity)
         logging.info("BUY success: %s", order)
         save_trade("BUY", symbol, quantity, price, notional, "SUCCESS", str(order))
@@ -139,7 +137,7 @@ def execute_buy(client, symbol, quote_amount):
         return None
 
 
-def execute_sell(client, symbol, base_amount):
+def execute_sell(client, symbol, base_amount, quote_asset):
     ticker = client.get_symbol_ticker(symbol=symbol)
     price = float(ticker["price"])
     quantity = adjust_quantity_to_lot_size(client, symbol, base_amount)
@@ -154,8 +152,8 @@ def execute_sell(client, symbol, base_amount):
 
     if requirements["min_notional"] > 0 and notional < requirements["min_notional"]:
         reason = (
-            f"Skipped SELL: notional {notional:.4f} {QUOTE_ASSET} "
-            f"is below exchange minimum {requirements['min_notional']:.4f} {QUOTE_ASSET}"
+            f"Skipped SELL: notional {notional:.4f} {quote_asset} "
+            f"is below exchange minimum {requirements['min_notional']:.4f} {quote_asset}"
         )
         logging.warning(reason)
         save_trade("SELL", symbol, quantity, price, notional, "SKIPPED", reason)

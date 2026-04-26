@@ -1,0 +1,4 @@
+2026-04-26 23:25:52,873 | INFO | Fear and Greed response fetched successfully
+2026-04-26 23:25:52,875 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=44
+2026-04-26 23:25:53,378 | INFO | Balances: USDC=3.7849 PEPE=523675.04000000
+2026-04-26 23:25:54,287 | WARNING | BUY signal generated but computed amount 0.5677 USDC is below exchange minimum 1.0000 USDC

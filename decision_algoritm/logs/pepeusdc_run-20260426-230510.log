@@ -1,0 +1,6 @@
+2026-04-26 23:05:12,021 | INFO | Fear and Greed response fetched successfully
+2026-04-26 23:05:12,022 | INFO | Signal=BUY, price=0.00, sma=0.00, fear=44, strength=0.1626
+2026-04-26 23:05:13,022 | INFO | Balances: USDC=7.9029 PEPE=0.00000000
+2026-04-26 23:05:13,738 | INFO | Executing BUY for 2.0548 USDC
+2026-04-26 23:05:14,663 | INFO | BUY attempt: PEPEUSDC, USDC=2.0547615868, qty=524173.0, price=3.92e-06
+2026-04-26 23:05:14,910 | INFO | BUY success: {'symbol': 'PEPEUSDC', 'orderId': 555194167, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJb41a6eeb7be4c30b433748', 'transactTime': 1777237514900, 'price': '0.00000000', 'origQty': '524173.00', 'executedQty': '524173.00', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '2.05999989', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'workingTime': 1777237514900, 'fills': [{'price': '0.00000393', 'qty': '524173.00', 'commission': '497.96', 'commissionAsset': 'PEPE', 'tradeId': 63825238}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}

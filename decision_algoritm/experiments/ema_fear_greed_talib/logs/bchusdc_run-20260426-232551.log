@@ -1,0 +1,4 @@
+2026-04-26 23:25:52,695 | INFO | Fear and Greed response fetched successfully
+2026-04-26 23:25:52,696 | INFO | Signal=BUY, price=454.20, ema=453.02, fear=44
+2026-04-26 23:25:53,193 | INFO | Balances: USDC=3.7849 BCH=0.01900000
+2026-04-26 23:25:54,128 | WARNING | BUY signal generated but computed amount 0.5677 USDC is below exchange minimum 5.4504 USDC
