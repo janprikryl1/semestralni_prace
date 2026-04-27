@@ -7,7 +7,7 @@ from database import initialize_db, save_decision
 from common.fear_and_greed import get_fear_and_greed
 from new_cm_order import create_client, execute_buy, execute_sell, get_balance, get_buy_order_requirements
 from common.market_data import get_price_data
-from sma import compute_sma
+from compute_sma import compute_sma
 from common.logging_init import setup_logging
 
 _KNOWN_QUOTE_ASSETS = ["USDC", "USDT", "BUSD", "TUSD", "BNB", "ETH", "BTC"]
