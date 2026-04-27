@@ -1,0 +1,6 @@
+2026-04-27 11:51:10,703 | INFO | Fear and Greed response fetched successfully
+2026-04-27 11:51:10,710 | INFO | Signal=BUY, price=0.32, sma=0.32, fear=46, strength=0.1427
+2026-04-27 11:51:11,211 | INFO | Balances: USDC=44.4755 TRX=48.10000000
+2026-04-27 11:51:11,937 | INFO | Executing BUY for 11.5636 USDC
+2026-04-27 11:51:13,715 | INFO | BUY attempt: TRXUSDC, USDC=11.5636209858, qty=35.6, price=0.3247
+2026-04-27 11:51:14,044 | INFO | BUY success: {'symbol': 'TRXUSDC', 'orderId': 247829323, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ5c44557083a54ba526e1be', 'transactTime': 1777283473562, 'price': '0.00000000', 'origQty': '35.60000000', 'executedQty': '35.60000000', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '11.55932000', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'workingTime': 1777283473562, 'fills': [{'price': '0.32470000', 'qty': '35.60000000', 'commission': '0.00001310', 'commissionAsset': 'BNB', 'tradeId': 14865333}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}

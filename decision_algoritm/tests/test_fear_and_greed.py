@@ -1,7 +1,7 @@
 import os
 import pytest
 import requests
-from fear_and_grid_wrapper import get_fear_and_greed
+from common.fear_and_greed import get_fear_and_greed
 
 
 def test_get_fear_and_greed_returns_live_data():
@@ -31,6 +31,6 @@ def test_get_fear_and_greed_returns_none_on_request_error(monkeypatch):
     def raise_request_error(*args, **kwargs):
         raise requests.exceptions.RequestException("network error")
 
-    monkeypatch.setattr("fear_and_grid_wrapper.requests.get", raise_request_error)
+    monkeypatch.setattr("common.fear_and_greed.requests.get", raise_request_error)
 
     assert get_fear_and_greed() is None

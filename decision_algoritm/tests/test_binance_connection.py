@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 import pytest
-import price_data
+from common import market_data
 
 
 def test_create_client_raises_without_credentials(monkeypatch):
@@ -8,7 +8,7 @@ def test_create_client_raises_without_credentials(monkeypatch):
     monkeypatch.delenv("API_SECRET", raising=False)
 
     with pytest.raises(RuntimeError, match="Missing Binance API credentials"):
-        price_data.create_client()
+        market_data.create_client()
 
 
 def test_create_client_sets_timestamp_offset(monkeypatch):
@@ -19,10 +19,10 @@ def test_create_client_sets_timestamp_offset(monkeypatch):
 
     monkeypatch.setenv("API_KEY", "key")
     monkeypatch.setenv("API_SECRET", "secret")
-    monkeypatch.setattr("price_data.Client", client_factory)
-    monkeypatch.setattr("price_data.time.time", Mock(return_value=2.0))
+    monkeypatch.setattr("common.market_data.Client", client_factory)
+    monkeypatch.setattr("common.market_data.time.time", Mock(return_value=2.0))
 
-    client = price_data.create_client()
+    client = market_data.create_client()
 
     assert client is fake_client
     client_factory.assert_called_once_with(

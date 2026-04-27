@@ -1,5 +1,4 @@
 -- MySQL schema for unified trading decisions and trades log
--- Replaces: trades.db (SMA_FG strategy) and ema_fng_trades.db (EMA_FG strategy)
 
 CREATE TABLE IF NOT EXISTS decisions (
     id            INT UNSIGNED     NOT NULL AUTO_INCREMENT,

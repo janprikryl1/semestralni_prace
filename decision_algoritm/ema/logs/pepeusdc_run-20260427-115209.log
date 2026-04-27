@@ -1,0 +1,4 @@
+2026-04-27 11:52:10,528 | INFO | Fear and Greed response fetched successfully
+2026-04-27 11:52:10,532 | INFO | Signal=HOLD, price=0.00, ema=0.00, fear=46
+2026-04-27 11:52:11,027 | INFO | Balances: USDC=32.9161 PEPE=523675.04000000
+2026-04-27 11:52:11,028 | INFO | Holding position for this cycle

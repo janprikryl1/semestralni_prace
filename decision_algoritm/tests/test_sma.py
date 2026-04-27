@@ -1,5 +1,5 @@
 import pytest
-from sma import compute_sma
+from sma.sma import compute_sma
 
 
 def test_compute_sma_returns_average_of_last_period():
