@@ -1,4 +1,5 @@
 import pytest
+
 from sma.sma import compute_sma
 
 

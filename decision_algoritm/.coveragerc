@@ -1,8 +1,7 @@
 [run]
 source =
-    fear_and_grid_wrapper
-    price_data
     sma
+    common
 omit =
     tests/*
 
