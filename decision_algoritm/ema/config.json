@@ -2,7 +2,7 @@
   "trading": {
     "hours_back": 200,
     "interval_seconds": 3600,
-    "dry_run": true,
+    "dry_run": false,
     "quantity_precision": 6
   },
   "indicators": {
@@ -13,9 +13,9 @@
     "fear_sell_threshold": 60
   },
   "risk_management": {
-    "buy_strong_fear_threshold": 20,
-    "buy_normal_fear_threshold": 45,
-    "sell_normal_fear_threshold": 60,
+    "buy_strong_fear_threshold": 15,
+    "buy_normal_fear_threshold": 35,
+    "sell_normal_fear_threshold": 70,
     "sell_strong_fear_threshold": 80,
     "buy_strong": 0.3,
     "buy_normal": 0.15,

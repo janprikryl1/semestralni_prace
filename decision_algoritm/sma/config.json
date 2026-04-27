@@ -9,17 +9,17 @@
     "sma_period": 14
   },
   "strategy": {
-    "_fear_buy_threshold": 30,
-    "_fear_sell_threshold": 70,
+    "fear_buy_threshold": 30,
+    "fear_sell_threshold": 70,
 
-    "fear_buy_threshold": 60,
-    "fear_sell_threshold": 55
+    "_fear_buy_threshold": 60,
+    "_fear_sell_threshold": 55
   },
   "risk_management": {
-    "buy_strong_fear_threshold": 20,
-    "buy_normal_fear_threshold": 56,
-    "sell_normal_fear_threshold": 60,
-    "sell_strong_fear_threshold": 80,
+    "buy_strong_fear_threshold": 15,
+    "buy_normal_fear_threshold": 25,
+    "sell_normal_fear_threshold": 75,
+    "sell_strong_fear_threshold": 85,
     "buy_strong": 0.4,
     "buy_normal": 0.26,
     "sell_strong": 1.0,
