@@ -1,4 +1,34 @@
-2026-04-27 11:52:10,526 | INFO | Fear and Greed response fetched successfully
-2026-04-27 11:52:10,529 | INFO | Signal=HOLD, price=1.42, ema=1.43, fear=46
-2026-04-27 11:52:11,026 | INFO | Balances: USDC=32.9161 XRP=6.10000000
-2026-04-27 11:52:11,027 | INFO | Holding position for this cycle
+2026-04-28 21:15:23,093 | INFO | Fear and Greed response fetched successfully
+2026-04-28 21:15:23,099 | INFO | Signal=HOLD, price=1.38, ema=1.39, fear=43
+2026-04-28 21:15:23,348 | ERROR | Unexpected error in trading loop: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
+Traceback (most recent call last):
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\ema\main.py", line 208, in main
+    run_cycle(symbol, base_asset, quote_asset)
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\ema\main.py", line 145, in run_cycle
+    quote_balance = get_balance(client, quote_asset)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\ema\order_executor.py", line 10, in get_balance
+    info = client.get_asset_balance(asset=asset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 2270, in get_asset_balance
+    res = self.get_account(**params)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 2245, in get_account
+    return self._get("account", True, data=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 185, in _get
+    return self._request_api("get", path, signed, version, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 119, in _request_api
+    return self._request(method, uri, signed, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 91, in _request
+    return self._handle_response(self.response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 100, in _handle_response
+    raise BinanceAPIException(response, response.status_code, response.text)
+binance.exceptions.BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
+2026-04-28 21:20:01,113 | INFO | Fear and Greed response fetched successfully
+2026-04-28 21:20:01,114 | INFO | Signal=HOLD, price=1.38, ema=1.39, fear=43
+2026-04-28 21:20:01,615 | INFO | Balances: USDC=47.0729 XRP=6.10000000
+2026-04-28 21:20:01,616 | INFO | Holding position for this cycle

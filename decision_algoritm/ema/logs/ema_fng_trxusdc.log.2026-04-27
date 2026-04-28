@@ -1,0 +1,4 @@
+2026-04-27 11:52:10,545 | INFO | Fear and Greed response fetched successfully
+2026-04-27 11:52:10,548 | INFO | Signal=HOLD, price=0.32, ema=0.32, fear=46
+2026-04-27 11:52:11,043 | INFO | Balances: USDC=32.9161 TRX=83.70000000
+2026-04-27 11:52:11,044 | INFO | Holding position for this cycle

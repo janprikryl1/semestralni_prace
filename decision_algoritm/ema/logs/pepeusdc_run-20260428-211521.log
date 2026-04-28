@@ -1,6 +1,6 @@
-2026-04-28 21:15:23,010 | INFO | Fear and Greed response fetched successfully
-2026-04-28 21:15:23,013 | INFO | Signal=BUY, price=448.70, ema=447.83, fear=43
-2026-04-28 21:15:23,261 | ERROR | Unexpected error in trading loop: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
+2026-04-28 21:15:23,215 | INFO | Fear and Greed response fetched successfully
+2026-04-28 21:15:23,219 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=43
+2026-04-28 21:15:23,466 | ERROR | Unexpected error in trading loop: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
 Traceback (most recent call last):
   File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\ema\main.py", line 208, in main
     run_cycle(symbol, base_asset, quote_asset)
@@ -28,7 +28,3 @@ Traceback (most recent call last):
   File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 100, in _handle_response
     raise BinanceAPIException(response, response.status_code, response.text)
 binance.exceptions.BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
-2026-04-28 21:20:01,368 | INFO | Fear and Greed response fetched successfully
-2026-04-28 21:20:01,369 | INFO | Signal=BUY, price=448.90, ema=447.85, fear=43
-2026-04-28 21:20:01,871 | INFO | Balances: USDC=47.0729 BCH=0.01900000
-2026-04-28 21:20:02,906 | WARNING | BUY signal generated but computed amount 1.4122 USDC is below exchange minimum 5.3868 USDC

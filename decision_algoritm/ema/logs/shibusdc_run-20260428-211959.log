@@ -1,0 +1,6 @@
+2026-04-28 21:20:01,560 | INFO | Fear and Greed response fetched successfully
+2026-04-28 21:20:01,561 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=43
+2026-04-28 21:20:02,065 | INFO | Balances: USDC=47.0729 SHIB=752116.00000000
+2026-04-28 21:20:02,881 | INFO | Executing BUY for 1.4122 USDC
+2026-04-28 21:20:03,756 | INFO | BUY attempt: SHIBUSDC, USDC=1.4121883389, qty=230373.0, price=6.13e-06
+2026-04-28 21:20:04,005 | INFO | BUY success: {'symbol': 'SHIBUSDC', 'orderId': 201083736, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ309a8a0d39006c57bc0911', 'transactTime': 1777404004698, 'price': '0.00000000', 'origQty': '230373.00', 'executedQty': '230373.00', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '1.41218649', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'workingTime': 1777404004698, 'fills': [{'price': '0.00000613', 'qty': '230373.00', 'commission': '0.00000163', 'commissionAsset': 'BNB', 'tradeId': 10212615}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}

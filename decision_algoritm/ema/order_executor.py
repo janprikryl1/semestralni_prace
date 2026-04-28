@@ -30,8 +30,12 @@ def get_min_notional_filter(filters):
     return filters.get("NOTIONAL") or filters.get("MIN_NOTIONAL")
 
 
-def get_buy_order_requirements(client, symbol, price):
-    filters = get_symbol_filter_map(client, symbol)
+def get_quantity_precision(step_size: str) -> int:
+    exp = Decimal(step_size).normalize().as_tuple().exponent
+    return max(0, -exp)
+
+
+def _compute_requirements(filters, price):
     lot_filter = get_lot_size_filter(filters)
     notional_filter = get_min_notional_filter(filters)
 
@@ -60,11 +64,11 @@ def get_buy_order_requirements(client, symbol, price):
     }
 
 
-def adjust_quantity_to_lot_size(client, symbol, quantity):
-    filters = get_symbol_filter_map(client, symbol)
+def _adjust_and_format(filters, quantity):
     lot_filter = get_lot_size_filter(filters)
     if not lot_filter:
-        return round(quantity, ORDER_DECIMALS)
+        adjusted = round(quantity, ORDER_DECIMALS)
+        return adjusted, format_quantity(adjusted)
 
     quantity_decimal = Decimal(str(quantity))
     min_qty = Decimal(lot_filter["minQty"])
@@ -72,23 +76,35 @@ def adjust_quantity_to_lot_size(client, symbol, quantity):
     step_size = Decimal(lot_filter["stepSize"])
 
     if quantity_decimal < min_qty:
-        return 0.0
+        return 0.0, "0"
 
-    adjusted_quantity = (quantity_decimal // step_size) * step_size
+    adjusted_quantity = quantity_decimal.quantize(step_size, rounding=ROUND_DOWN)
+    adjusted_quantity = (adjusted_quantity // step_size) * step_size
     adjusted_quantity = adjusted_quantity.quantize(step_size, rounding=ROUND_DOWN)
 
     if adjusted_quantity < min_qty:
-        return 0.0
+        return 0.0, "0"
     if adjusted_quantity > max_qty:
         adjusted_quantity = max_qty
 
-    return float(adjusted_quantity)
+    precision = get_quantity_precision(lot_filter["stepSize"])
+    return float(adjusted_quantity), f"{float(adjusted_quantity):.{precision}f}"
+
+
+def get_buy_order_requirements(client, symbol, price):
+    return _compute_requirements(get_symbol_filter_map(client, symbol), price)
+
+
+def adjust_quantity_to_lot_size(client, symbol, quantity):
+    adjusted, _ = _adjust_and_format(get_symbol_filter_map(client, symbol), quantity)
+    return adjusted
 
 
 def execute_buy(client, symbol, quote_amount, quote_asset):
     ticker = client.get_symbol_ticker(symbol=symbol)
     price = float(ticker["price"])
-    requirements = get_buy_order_requirements(client, symbol, price)
+    filters = get_symbol_filter_map(client, symbol)
+    requirements = _compute_requirements(filters, price)
 
     if quote_amount < requirements["required_quote"]:
         reason = (
@@ -99,7 +115,7 @@ def execute_buy(client, symbol, quote_amount, quote_asset):
         save_trade("BUY", symbol, 0.0, price, 0.0, "SKIPPED", reason)
         return None
 
-    quantity = adjust_quantity_to_lot_size(client, symbol, quote_amount / price)
+    quantity, formatted_quantity = _adjust_and_format(filters, quote_amount / price)
     notional = quantity * price
 
     if quantity <= 0:
@@ -116,8 +132,6 @@ def execute_buy(client, symbol, quote_amount, quote_asset):
         logging.warning(reason)
         save_trade("BUY", symbol, quantity, price, notional, "SKIPPED", reason)
         return None
-
-    formatted_quantity = format_quantity(quantity)
 
     if DRY_RUN:
         logging.info("DRY RUN BUY: %s, %s=%s, qty=%s, price=%s", symbol, quote_asset, quote_amount, quantity, price)
@@ -140,8 +154,9 @@ def execute_buy(client, symbol, quote_amount, quote_asset):
 def execute_sell(client, symbol, base_amount, quote_asset):
     ticker = client.get_symbol_ticker(symbol=symbol)
     price = float(ticker["price"])
-    quantity = adjust_quantity_to_lot_size(client, symbol, base_amount)
-    requirements = get_buy_order_requirements(client, symbol, price)
+    filters = get_symbol_filter_map(client, symbol)
+    requirements = _compute_requirements(filters, price)
+    quantity, formatted_quantity = _adjust_and_format(filters, base_amount)
     notional = quantity * price
 
     if quantity <= 0:
@@ -158,8 +173,6 @@ def execute_sell(client, symbol, base_amount, quote_asset):
         logging.warning(reason)
         save_trade("SELL", symbol, quantity, price, notional, "SKIPPED", reason)
         return None
-
-    formatted_quantity = format_quantity(quantity)
 
     if DRY_RUN:
         logging.info("DRY RUN SELL: %s, qty=%s, price=%s", symbol, quantity, price)

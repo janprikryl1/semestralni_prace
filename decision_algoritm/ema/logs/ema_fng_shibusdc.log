@@ -1,4 +1,36 @@
-2026-04-27 11:52:10,343 | INFO | Fear and Greed response fetched successfully
-2026-04-27 11:52:10,347 | INFO | Signal=HOLD, price=0.00, ema=0.00, fear=46
-2026-04-27 11:52:10,842 | INFO | Balances: USDC=32.9161 SHIB=330879.00000000
-2026-04-27 11:52:10,843 | INFO | Holding position for this cycle
+2026-04-28 21:15:22,931 | INFO | Fear and Greed response fetched successfully
+2026-04-28 21:15:22,935 | INFO | Signal=HOLD, price=0.00, ema=0.00, fear=43
+2026-04-28 21:15:23,204 | ERROR | Unexpected error in trading loop: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
+Traceback (most recent call last):
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\ema\main.py", line 208, in main
+    run_cycle(symbol, base_asset, quote_asset)
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\ema\main.py", line 145, in run_cycle
+    quote_balance = get_balance(client, quote_asset)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\ema\order_executor.py", line 10, in get_balance
+    info = client.get_asset_balance(asset=asset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 2270, in get_asset_balance
+    res = self.get_account(**params)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 2245, in get_account
+    return self._get("account", True, data=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 185, in _get
+    return self._request_api("get", path, signed, version, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 119, in _request_api
+    return self._request(method, uri, signed, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 91, in _request
+    return self._handle_response(self.response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jan.prikryl\AppData\Roaming\Python\Python312\site-packages\binance\client.py", line 100, in _handle_response
+    raise BinanceAPIException(response, response.status_code, response.text)
+binance.exceptions.BinanceAPIException: APIError(code=-2015): Invalid API-key, IP, or permissions for action.
+2026-04-28 21:20:01,560 | INFO | Fear and Greed response fetched successfully
+2026-04-28 21:20:01,561 | INFO | Signal=BUY, price=0.00, ema=0.00, fear=43
+2026-04-28 21:20:02,065 | INFO | Balances: USDC=47.0729 SHIB=752116.00000000
+2026-04-28 21:20:02,881 | INFO | Executing BUY for 1.4122 USDC
+2026-04-28 21:20:03,756 | INFO | BUY attempt: SHIBUSDC, USDC=1.4121883389, qty=230373.0, price=6.13e-06
+2026-04-28 21:20:04,005 | INFO | BUY success: {'symbol': 'SHIBUSDC', 'orderId': 201083736, 'orderListId': -1, 'clientOrderId': 'x-HNA2TXFJ309a8a0d39006c57bc0911', 'transactTime': 1777404004698, 'price': '0.00000000', 'origQty': '230373.00', 'executedQty': '230373.00', 'origQuoteOrderQty': '0.00000000', 'cummulativeQuoteQty': '1.41218649', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'workingTime': 1777404004698, 'fills': [{'price': '0.00000613', 'qty': '230373.00', 'commission': '0.00000163', 'commissionAsset': 'BNB', 'tradeId': 10212615}], 'selfTradePreventionMode': 'EXPIRE_MAKER'}

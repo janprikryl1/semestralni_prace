@@ -1,0 +1,4 @@
+2026-04-27 11:52:10,526 | INFO | Fear and Greed response fetched successfully
+2026-04-27 11:52:10,529 | INFO | Signal=HOLD, price=1.42, ema=1.43, fear=46
+2026-04-27 11:52:11,026 | INFO | Balances: USDC=32.9161 XRP=6.10000000
+2026-04-27 11:52:11,027 | INFO | Holding position for this cycle
