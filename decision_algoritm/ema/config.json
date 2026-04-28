@@ -1,7 +1,7 @@
 {
   "trading": {
     "hours_back": 200,
-    "interval_seconds": 3600,
+    "interval_seconds": 900,
     "dry_run": false,
     "quantity_precision": 6
   },
