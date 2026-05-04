@@ -51,10 +51,10 @@ def evaluate_market(client, symbol):
 
     fear = int(fear_data[0]["value"])
 
-    if current_price > ema and fear < config["strategy"]["fear_buy_threshold"]:
+    if current_price > ema and fear <= config["strategy"]["fear_buy_threshold"]:
         signal = "BUY"
         reason = "Price is above EMA and market sentiment is fearful"
-    elif current_price < ema and fear > config["strategy"]["fear_sell_threshold"]:
+    elif current_price < ema and fear >= config["strategy"]["fear_sell_threshold"]:
         signal = "SELL"
         reason = "Price is below EMA and market sentiment is greedy"
     else:
@@ -91,11 +91,11 @@ def get_buy_amount(fear, quote_balance):
     strong_size = risk_config["buy_strong"]
     normal_size = risk_config["buy_normal"]
 
-    if fear < strong_threshold:
+    if fear <= strong_threshold:
         return quote_balance * strong_size
-    if fear < normal_threshold:
+    if fear <= normal_threshold:
         return quote_balance * normal_size
-    if fear >= buy_threshold:
+    if fear > buy_threshold:
         return 0.0
 
     size_fraction = interpolate_size(
@@ -119,11 +119,11 @@ def get_sell_amount(fear, base_balance):
     normal_size = risk_config["sell_normal"]
     strong_size = risk_config["sell_strong"]
 
-    if fear > strong_threshold:
+    if fear >= strong_threshold:
         return base_balance * strong_size
-    if fear > normal_threshold:
+    if fear >= normal_threshold:
         return base_balance * normal_size
-    if fear <= sell_threshold:
+    if fear < sell_threshold:
         return 0.0
 
     size_fraction = interpolate_size(

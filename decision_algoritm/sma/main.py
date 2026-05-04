@@ -58,11 +58,11 @@ def evaluate_market(client, symbol):
     signal = "HOLD"
     reason = "Signals are mixed"
 
-    if fear < config["strategy"]["fear_buy_threshold"] and trend_up:
+    if fear <= config["strategy"]["fear_buy_threshold"] and trend_up:
         signal = "BUY"
         sentiment_component = max(0.0, (config["strategy"]["fear_buy_threshold"] - fear) / 100)
         reason = "Bullish trend above SMA with fearful market sentiment"
-    elif fear > config["strategy"]["fear_sell_threshold"] and not trend_up:
+    elif fear >= config["strategy"]["fear_sell_threshold"] and not trend_up:
         signal = "SELL"
         sentiment_component = max(0.0, (fear - config["strategy"]["fear_sell_threshold"]) / 100)
         reason = "Bearish trend below SMA with greedy market sentiment"
@@ -107,11 +107,11 @@ def get_buy_amount(fear, quote_balance):
     strong_size = risk_config["buy_strong"]
     normal_size = risk_config["buy_normal"]
 
-    if fear < strong_threshold:
+    if fear <= strong_threshold:
         return quote_balance * strong_size
-    if fear < normal_threshold:
+    if fear <= normal_threshold:
         return quote_balance * normal_size
-    if fear >= buy_threshold:
+    if fear > buy_threshold:
         return 0.0
 
     size_fraction = interpolate_size(
@@ -135,11 +135,11 @@ def get_sell_amount(fear, base_balance):
     normal_size = risk_config["sell_normal"]
     strong_size = risk_config["sell_strong"]
 
-    if fear > strong_threshold:
+    if fear >= strong_threshold:
         return base_balance * strong_size
-    if fear > normal_threshold:
+    if fear >= normal_threshold:
         return base_balance * normal_size
-    if fear <= sell_threshold:
+    if fear < sell_threshold:
         return 0.0
 
     size_fraction = interpolate_size(

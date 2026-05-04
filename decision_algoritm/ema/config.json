@@ -17,8 +17,8 @@
   },
   "risk_management": {
     "buy_strong_fear_threshold": 15,
-    "buy_normal_fear_threshold": 35,
-    "sell_normal_fear_threshold": 70,
+    "buy_normal_fear_threshold": 46,
+    "sell_normal_fear_threshold": 45,
     "sell_strong_fear_threshold": 80,
     "buy_strong": 0.3,
     "buy_normal": 0.15,
