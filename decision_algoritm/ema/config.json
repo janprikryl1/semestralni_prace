@@ -9,8 +9,11 @@
     "ema_period": 21
   },
   "strategy": {
-    "fear_buy_threshold": 45,
-    "fear_sell_threshold": 60
+    "fear_buy_threshold": 46,
+    "fear_sell_threshold": 45,
+
+    "_fear_buy_threshold": 45,
+    "_fear_sell_threshold": 60
   },
   "risk_management": {
     "buy_strong_fear_threshold": 15,
