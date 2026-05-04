@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+import os
 import pytest
 import requests
 import random
@@ -6,9 +6,13 @@ import time
 import hmac
 import hashlib
 from urllib.parse import urlencode
+from dotenv import load_dotenv
 
-API_KEY = "g5FkuBTbjYYiSv73lXW204MZf3wXxoq2BQ9A51oqrg02Jhw3FIlbzVhiubAmYlMz"
-SECRET_KEY = "7M9ay9d4hXrWXdshl8uuvsqVn1nqhIinUT4Rg8FsovkklitbqXqRTjZwW98PeXZm"
+load_dotenv()
+
+API_KEY = os.getenv("BINANCE_API_DEMO_API_KEY")
+SECRET_KEY = os.getenv("BINANCE_API_DEMO_API_SECRET")
+
 BASE_URL = "https://demo-api.binance.com/api"
 
 
