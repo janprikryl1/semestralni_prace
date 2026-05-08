@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:C:\Users\jan.prikryl\Desktop\Semestralni projekt\decision_algoritm\trades.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name=".coverage" uuid="6471ce3c-3061-42a0-ad9b-721fc6651ec2">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/.coverage</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

@@ -1,0 +1,4 @@
+2026-05-08 10:40:02,875 | INFO | Fear and Greed response fetched successfully
+2026-05-08 10:40:02,885 | INFO | Signal=HOLD, price=450.60, sma=450.44, fear=48, strength=0.0003
+2026-05-08 10:40:03,393 | INFO | Balances: USDC=81.7820 BCH=0.00400000
+2026-05-08 10:40:03,394 | INFO | Holding position for this cycle

@@ -1,0 +1,4 @@
+2026-05-08 10:40:02,873 | INFO | Fear and Greed response fetched successfully
+2026-05-08 10:40:02,882 | INFO | Signal=HOLD, price=0.35, sma=0.35, fear=48, strength=0.0080
+2026-05-08 10:40:03,385 | INFO | Balances: USDC=81.7820 TRX=3.90000000
+2026-05-08 10:40:03,385 | INFO | Holding position for this cycle

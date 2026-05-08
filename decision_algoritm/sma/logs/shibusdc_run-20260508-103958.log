@@ -1,0 +1,4 @@
+2026-05-08 10:40:02,889 | INFO | Fear and Greed response fetched successfully
+2026-05-08 10:40:02,892 | INFO | Signal=HOLD, price=0.00, sma=0.00, fear=48, strength=0.0062
+2026-05-08 10:40:03,395 | INFO | Balances: USDC=81.7820 SHIB=161789.00000000
+2026-05-08 10:40:03,396 | INFO | Holding position for this cycle
