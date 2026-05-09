@@ -17,7 +17,6 @@ import argparse
 import os
 import sys
 from datetime import datetime, timedelta
-
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.gridspec as gridspec
@@ -27,15 +26,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── Konfigurace ──────────────────────────────────────────────────────────────
-
 STRATEGY_META = {
     "sma": {
         "trading_type": "SMA_FG",
         "indicator_col": "sma",
         "label": "SMA-14",
         "color": "#2196F3",
-        # Starý config (fear_buy=60, fear_sell=55)
         "old_config": {
             "fear_buy_threshold": 60,
             "fear_sell_threshold": 55,
@@ -44,7 +40,6 @@ STRATEGY_META = {
             "sell_normal_fear_threshold": 60,
             "sell_strong_fear_threshold": 80,
         },
-        # Nový config (aktuální)
         "new_config": {
             "fear_buy_threshold": 40,
             "fear_sell_threshold": 45,
@@ -80,8 +75,6 @@ STRATEGY_META = {
 
 SIGNAL_COLORS = {"BUY": "#4CAF50", "SELL": "#F44336", "HOLD": "#9E9E9E"}
 
-
-# ── Databáze ──────────────────────────────────────────────────────────────────
 
 def get_connection():
     return mysql.connector.connect(
@@ -134,8 +127,6 @@ def load_trades(trading_type: str, date_from: datetime, date_to: datetime) -> pd
     return df
 
 
-# ── Analytické funkce ─────────────────────────────────────────────────────────
-
 def signal_stats(decisions: pd.DataFrame) -> dict:
     counts = decisions["signal"].value_counts().to_dict()
     total = len(decisions)
@@ -171,7 +162,7 @@ def trade_stats(trades: pd.DataFrame) -> dict:
 
 
 def split_by_config(df: pd.DataFrame, config_change: datetime | None):
-    """Rozdělí DataFrame na fáze old-config a new-config."""
+    """Divide DataFrame to stage old-config and new-config"""
     if config_change is None or df.empty:
         return None, df
     old = df[df["time"] < config_change]
@@ -180,7 +171,7 @@ def split_by_config(df: pd.DataFrame, config_change: datetime | None):
 
 
 def cumulative_notional(trades: pd.DataFrame) -> pd.DataFrame:
-    """Kumulativní objem obchodů v USD po hodinách (pro graf)."""
+    """Cumulative trading volume in USD by hour (for the chart)"""
     if trades.empty:
         return pd.DataFrame(columns=["time", "cum_buy", "cum_sell"])
     ok = trades[trades["status"] == "SUCCESS"].copy()
@@ -192,102 +183,79 @@ def cumulative_notional(trades: pd.DataFrame) -> pd.DataFrame:
     return merged.reset_index()
 
 
-# ── Výpis shrnutí ─────────────────────────────────────────────────────────────
-
 def print_summary(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd.DataFrame,
                   config_change: datetime | None):
     label = meta["label"]
-    sep = "─" * 60
-
-    print(f"\n{'═' * 60}")
-    print(f"  Strategy: {label} ({meta['trading_type']})")
-    print(f"{'═' * 60}")
-
+    print(f"\nStrategy: {label} ({meta['trading_type']})")
     if decisions.empty:
-        print("  [!] No data in decisions table for current season.")
+        print("[Warning] No data in decisions table for current season.")
     else:
-        print(f"\n  Season:  {decisions['time'].min():%Y-%m-%d %H:%M}  →  {decisions['time'].max():%Y-%m-%d %H:%M}")
-        print(f"  Symbols: {', '.join(sorted(decisions['symbol'].unique()))}")
+        print(f"[Info] Season:  {decisions['time'].min():%Y-%m-%d %H:%M} - {decisions['time'].max():%Y-%m-%d %H:%M}")
+        print(f"[Info] Symbols: {', '.join(sorted(decisions['symbol'].unique()))}")
 
-    # ── Celkové signály ──
-    print(f"\n{sep}")
-    print("  SIGNALS (total)")
-    print(sep)
+    print("\nSIGNALS (total)")
     s = signal_stats(decisions)
-    print(f"  Rozhodnutí celkem : {s['total_decisions']:>7}")
-    print(f"  BUY               : {s['buy_count']:>7}  ({s['buy_pct']:.1f}%)")
-    print(f"  SELL              : {s['sell_count']:>7}  ({s['sell_pct']:.1f}%)")
-    print(f"  HOLD              : {s['hold_count']:>7}  ({s['hold_pct']:.1f}%)")
+    print(f"Total decisions: {s['total_decisions']:>7}")
+    print(f"BUY            : {s['buy_count']:>7}  ({s['buy_pct']:.1f}%)")
+    print(f"SELL           : {s['sell_count']:>7}  ({s['sell_pct']:.1f}%)")
+    print(f"HOLD           : {s['hold_count']:>7}  ({s['hold_pct']:.1f}%)")
 
-    # ── Signály per config fáze ──
+    # Signals per config stage
     if config_change is not None and not decisions.empty:
         old_dec, new_dec = split_by_config(decisions, config_change)
-        print(f"\n{sep}")
-        print(f"  SIGNÁLY — starý config  (před {config_change:%Y-%m-%d})")
-        print(sep)
+        print(f"\nSIGNALS — old config (before {config_change:%Y-%m-%d})")
         if old_dec is not None and not old_dec.empty:
             s_old = signal_stats(old_dec)
-            print(f"  BUY  {s_old['buy_count']:>5} ({s_old['buy_pct']:.1f}%)  |  "
+            print(f"BUY  {s_old['buy_count']:>5} ({s_old['buy_pct']:.1f}%)    |  "
                   f"SELL {s_old['sell_count']:>5} ({s_old['sell_pct']:.1f}%)  |  "
                   f"HOLD {s_old['hold_count']:>5} ({s_old['hold_pct']:.1f}%)")
         else:
-            print("  (žádná data)")
+            print("(no data)")
 
-        print(f"\n{sep}")
-        print(f"  SIGNÁLY — nový config  (od {config_change:%Y-%m-%d})")
-        print(sep)
+        print(f"\nSIGNALS — new config (from {config_change:%Y-%m-%d})")
         if not new_dec.empty:
             s_new = signal_stats(new_dec)
-            print(f"  BUY  {s_new['buy_count']:>5} ({s_new['buy_pct']:.1f}%)  |  "
+            print(f"BUY  {s_new['buy_count']:>5} ({s_new['buy_pct']:.1f}%)    |  "
                   f"SELL {s_new['sell_count']:>5} ({s_new['sell_pct']:.1f}%)  |  "
                   f"HOLD {s_new['hold_count']:>5} ({s_new['hold_pct']:.1f}%)")
         else:
-            print("  (žádná data)")
+            print("(no data)")
 
-    # ── Obchody ──
-    print(f"\n{sep}")
-    print("  OBCHODY (SUCCESS)")
-    print(sep)
+    # ── Trades ──
+    print("\nTrandes (SUCCESS)")
     t = trade_stats(trades)
-    print(f"  Obchodů celkem    : {t['total_trades']:>7}")
-    print(f"  BUY               : {t['buy_trades']:>7}   (objem: {t['buy_volume_usd']:>10.2f} USD)")
-    print(f"  SELL              : {t['sell_trades']:>7}   (objem: {t['sell_volume_usd']:>10.2f} USD)")
-    print(f"  Celkový objem     : {t['total_volume_usd']:>20.2f} USD")
-    print(f"  Selhané pokusy    : {t['failed_trades']:>7}")
+    print(f"Total trades      : {t['total_trades']:>7}")
+    print(f"BUY               : {t['buy_trades']:>7} (volume: {t['buy_volume_usd']:>10.2f} USD)")
+    print(f"SELL              : {t['sell_trades']:>7} (volume: {t['sell_volume_usd']:>10.2f} USD)")
+    print(f"Total volume (usd): {t['total_volume_usd']:>20.2f} USD")
+    print(f"Failed trades     : {t['failed_trades']:>7}")
 
-    # ── Obchody per symbol ──
+    # ── Trades per symbol ──
     if not trades.empty:
-        print(f"\n{sep}")
-        print("  OBCHODY PER SYMBOL")
-        print(sep)
+        print("\nTRADES PER SYMBOL")
         ok = trades[trades["status"] == "SUCCESS"]
         if not ok.empty:
             grp = ok.groupby(["symbol", "side"])["notional"].agg(["count", "sum"])
-            grp.columns = ["počet", "objem USD"]
+            grp.columns = ["amount", "volume USD"]
             print(grp.to_string())
 
-    print(f"\n{'═' * 60}\n")
-
-
-# ── Grafy ─────────────────────────────────────────────────────────────────────
 
 def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd.DataFrame,
                   config_change: datetime | None, out_path: str):
     label = meta["label"]
-    color = meta["color"]
 
     fig = plt.figure(figsize=(18, 14))
     fig.suptitle(f"Vyhodnocení strategie {label}", fontsize=16, fontweight="bold", y=0.98)
     gs = gridspec.GridSpec(3, 3, figure=fig, hspace=0.45, wspace=0.35)
 
     ax_sig_time = fig.add_subplot(gs[0, :2])   # signály v čase (scatter)
-    ax_sig_pie  = fig.add_subplot(gs[0, 2])    # koláčový graf signálů
-    ax_fear     = fig.add_subplot(gs[1, :2])   # fear vs signál
-    ax_vol_sym  = fig.add_subplot(gs[1, 2])    # objem per symbol
-    ax_cum      = fig.add_subplot(gs[2, :2])   # kumulativní objem
-    ax_phase    = fig.add_subplot(gs[2, 2])    # porovnání fází
+    ax_sig_pie = fig.add_subplot(gs[0, 2])     # koláčový graf signálů
+    ax_fear = fig.add_subplot(gs[1, :2])       # fear vs signál
+    ax_vol_sym = fig.add_subplot(gs[1, 2])     # objem per symbol
+    ax_cum = fig.add_subplot(gs[2, :2])        # kumulativní objem
+    ax_phase = fig.add_subplot(gs[2, 2])       # porovnání fází
 
-    # ── 1. Signály v čase ──
+    # Signals in time
     if not decisions.empty:
         for sig, grp in decisions.groupby("signal"):
             ax_sig_time.scatter(grp["time"], grp["signal"],
@@ -305,7 +273,7 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
         ax_sig_time.set_ylabel("Signál")
         ax_sig_time.grid(axis="x", alpha=0.3)
 
-    # ── 2. Koláč signálů ──
+    # Signal Pie
     s = signal_stats(decisions)
     sizes = [s["buy_count"], s["sell_count"], s["hold_count"]]
     labels_pie = [f"BUY\n{s['buy_pct']:.1f}%", f"SELL\n{s['sell_pct']:.1f}%", f"HOLD\n{s['hold_pct']:.1f}%"]
@@ -317,13 +285,13 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
                        autopct="%1.0f%%", startangle=90, pctdistance=0.75)
     ax_sig_pie.set_title(f"Rozložení signálů\n(celkem {s['total_decisions']})")
 
-    # ── 3. Fear index vs signál ──
+    # Fear index vs signál
     if not decisions.empty:
         for sig, grp in decisions.groupby("signal"):
             ax_fear.hist(grp["fear"].dropna(), bins=20, alpha=0.6,
                          color=SIGNAL_COLORS.get(sig, "#607D8B"), label=sig)
         if config_change is not None:
-            # vyznač thresholdy obou configů
+            # Mark the thresholds for both configurations
             old_cfg = meta["old_config"]
             new_cfg = meta["new_config"]
             ax_fear.axvline(old_cfg["fear_buy_threshold"], color="#1565C0",
@@ -340,7 +308,7 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
         ax_fear.legend(fontsize=7)
         ax_fear.grid(alpha=0.3)
 
-    # ── 4. Objem obchodů per symbol ──
+    # Trading volume per symbol
     if not trades.empty:
         ok = trades[trades["status"] == "SUCCESS"]
         if not ok.empty:
@@ -361,7 +329,7 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
             ax_vol_sym.legend()
             ax_vol_sym.grid(axis="y", alpha=0.3)
 
-    # ── 5. Kumulativní objem v čase ──
+    # Cumulative volume over time
     cum = cumulative_notional(trades)
     if not cum.empty:
         ax_cum.fill_between(cum["time"], cum["cum_buy"], alpha=0.4,
@@ -381,7 +349,7 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
         ax_cum.legend()
         ax_cum.grid(alpha=0.3)
 
-    # ── 6. Porovnání fází (starý vs nový config) ──
+    # Compare stages (old vs new config)
     if config_change is not None and not decisions.empty:
         old_dec, new_dec = split_by_config(decisions, config_change)
         phases = []
@@ -394,12 +362,12 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
 
         if phases:
             x_ph = range(len(phases))
-            buy_vals  = [p[1]["buy_pct"]  for p in phases]
+            buy_vals = [p[1]["buy_pct"] for p in phases]
             sell_vals = [p[1]["sell_pct"] for p in phases]
             hold_vals = [p[1]["hold_pct"] for p in phases]
             w = 0.25
-            ax_phase.bar([i - w for i in x_ph], buy_vals,  w, label="BUY%",  color=SIGNAL_COLORS["BUY"],  alpha=0.85)
-            ax_phase.bar([i     for i in x_ph], sell_vals, w, label="SELL%", color=SIGNAL_COLORS["SELL"], alpha=0.85)
+            ax_phase.bar([i - w for i in x_ph], buy_vals, w, label="BUY%", color=SIGNAL_COLORS["BUY"], alpha=0.85)
+            ax_phase.bar([i for i in x_ph], sell_vals, w, label="SELL%", color=SIGNAL_COLORS["SELL"], alpha=0.85)
             ax_phase.bar([i + w for i in x_ph], hold_vals, w, label="HOLD%", color=SIGNAL_COLORS["HOLD"], alpha=0.85)
             ax_phase.set_xticks(list(x_ph))
             ax_phase.set_xticklabels([p[0] for p in phases], fontsize=9)
@@ -412,38 +380,34 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
         ax_phase.set_visible(False)
 
     plt.savefig(out_path, dpi=130, bbox_inches="tight")
-    print(f"  Graf uložen: {out_path}")
     plt.show()
 
 
-# ── CLI ───────────────────────────────────────────────────────────────────────
-
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Vyhodnocení live-trading strategií SMA_FG / EMA_FG"
+        description="Evaluating live-trading strategies SMA_FG / EMA_FG"
     )
     parser.add_argument(
         "--strategy", choices=["sma", "ema", "both"], default="both",
-        help="Která strategie se vyhodnotí (sma / ema / both)"
+        help="Strategy to evaluate (sma / ema / both)"
     )
     parser.add_argument(
         "--config-change",
-        help="Datum přepnutí konfigurace ve formátu YYYY-MM-DD (odděluje staré a nové nastavení)"
+        help="Configuration change date in YYYY-MM-DD format (separates the old and new settings)"
     )
     parser.add_argument(
         "--from", dest="date_from", default=None,
-        help="Začátek období YYYY-MM-DD (výchozí: 30 dní zpět)"
+        help="Start date: YYYY-MM-DD (default: 30 days ago)"
     )
     parser.add_argument(
         "--to", dest="date_to", default=None,
-        help="Konec období YYYY-MM-DD (výchozí: dnes)"
+        help="End of period YYYY-MM-DD (default: today)"
     )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-
     date_to = datetime.strptime(args.date_to, "%Y-%m-%d") if args.date_to else datetime.now()
     date_from = (datetime.strptime(args.date_from, "%Y-%m-%d") if args.date_from
                  else date_to - timedelta(days=30))
@@ -451,27 +415,22 @@ def main():
                      if args.config_change else None)
 
     strategies = ["sma", "ema"] if args.strategy == "both" else [args.strategy]
-
-    print(f"\nObdobí: {date_from:%Y-%m-%d} → {date_to:%Y-%m-%d}")
-    if config_change:
-        print(f"Přepnutí configu: {config_change:%Y-%m-%d}")
-
+    print(f"[Info] Period: {date_from:%Y-%m-%d} to {date_to:%Y-%m-%d}")
     for strat in strategies:
         meta = STRATEGY_META[strat]
-        print(f"\nNačítám data pro {meta['trading_type']}...")
         try:
             decisions = load_decisions(meta["trading_type"], date_from, date_to)
-            trades    = load_trades(meta["trading_type"], date_from, date_to)
+            trades = load_trades(meta["trading_type"], date_from, date_to)
         except Exception as exc:
-            print(f"  [CHYBA] Připojení k databázi selhalo: {exc}", file=sys.stderr)
+            print(f"[ERROR] Connection to database failed: {exc}", file=sys.stderr)
             continue
 
-        print(f"  Načteno {len(decisions)} rozhodnutí, {len(trades)} obchodů.")
+        print(f"[Info] Loaded {len(decisions)} decisions, {len(trades)} trades")
 
         print_summary(strat, meta, decisions, trades, config_change)
-
         out_png = f"evaluate_{strat}.png"
         plot_strategy(strat, meta, decisions, trades, config_change, out_png)
+        print("\n\n")
 
 
 if __name__ == "__main__":
