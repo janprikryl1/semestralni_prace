@@ -155,10 +155,10 @@ def trade_stats(trades: pd.DataFrame) -> dict:
         return {"total_trades": 0, "buy_trades": 0, "sell_trades": 0,
                 "total_volume_usd": 0, "buy_volume_usd": 0, "sell_volume_usd": 0,
                 "failed_trades": 0}
-    ok = trades[trades["status"] == "FILLED"]
+    ok = trades[trades["status"] == "SUCCESS"]
     buys = ok[ok["side"] == "BUY"]
     sells = ok[ok["side"] == "SELL"]
-    failed = trades[trades["status"] != "FILLED"]
+    failed = trades[trades["status"] != "SUCCESS"]
     return {
         "total_trades": len(ok),
         "buy_trades": len(buys),
@@ -183,7 +183,7 @@ def cumulative_notional(trades: pd.DataFrame) -> pd.DataFrame:
     """Kumulativní objem obchodů v USD po hodinách (pro graf)."""
     if trades.empty:
         return pd.DataFrame(columns=["time", "cum_buy", "cum_sell"])
-    ok = trades[trades["status"] == "FILLED"].copy()
+    ok = trades[trades["status"] == "SUCCESS"].copy()
     ok = ok.set_index("time").sort_index()
     buys = ok[ok["side"] == "BUY"]["notional"].resample("1h").sum().cumsum()
     sells = ok[ok["side"] == "SELL"]["notional"].resample("1h").sum().cumsum()
@@ -246,7 +246,7 @@ def print_summary(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
 
     # ── Obchody ──
     print(f"\n{sep}")
-    print("  OBCHODY (FILLED)")
+    print("  OBCHODY (SUCCESS)")
     print(sep)
     t = trade_stats(trades)
     print(f"  Obchodů celkem    : {t['total_trades']:>7}")
@@ -260,7 +260,7 @@ def print_summary(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
         print(f"\n{sep}")
         print("  OBCHODY PER SYMBOL")
         print(sep)
-        ok = trades[trades["status"] == "FILLED"]
+        ok = trades[trades["status"] == "SUCCESS"]
         if not ok.empty:
             grp = ok.groupby(["symbol", "side"])["notional"].agg(["count", "sum"])
             grp.columns = ["počet", "objem USD"]
@@ -342,7 +342,7 @@ def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
 
     # ── 4. Objem obchodů per symbol ──
     if not trades.empty:
-        ok = trades[trades["status"] == "FILLED"]
+        ok = trades[trades["status"] == "SUCCESS"]
         if not ok.empty:
             sym_vol = ok.groupby(["symbol", "side"])["notional"].sum().unstack(fill_value=0)
             syms = sym_vol.index.tolist()

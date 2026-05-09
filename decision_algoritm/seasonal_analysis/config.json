@@ -1,0 +1,28 @@
+{
+  "theme": {
+    "bg":       "#ffffff",
+    "card_bg":  "#f5f4f0",
+    "border":   "#d8d4ce",
+    "text":     "#1a1916",
+    "muted":    "#5a6272",
+    "zeroline": "#aab0b8"
+  },
+  "coin_colors": {
+    "BTC": "#F7931A",
+    "ETH": "#627EEA",
+    "SOL": "#9945FF",
+    "XRP": "#00B5D8",
+    "ADA": "#4DAA57"
+  },
+  "chart_colors": {
+    "accent":           "#b07d10",
+    "stl_trend":        "#b07d10",
+    "stl_seasonal":     "#16803a",
+    "stl_resid":        "#6b7280",
+    "bar_strong_sell":  "#dc2626",
+    "bar_sell":         "#f97316",
+    "bar_neutral":      "#eab308",
+    "bar_buy":          "#22c55e",
+    "bar_strong_buy":   "#16a34a"
+  }
+}

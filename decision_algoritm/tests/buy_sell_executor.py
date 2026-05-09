@@ -65,7 +65,6 @@ def create_market_order(symbol, quantity):
         return mock_response
 
 
-# Run from terminal
 if __name__ == "__main__":
     symbol = "BTCUSDC"
     quantity = 0.001
