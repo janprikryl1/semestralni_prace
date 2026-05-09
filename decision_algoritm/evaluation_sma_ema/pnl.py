@@ -18,23 +18,18 @@ import os
 import sys
 from datetime import datetime, timezone
 from collections import defaultdict
-
 from binance.client import Client
 from dotenv import load_dotenv
 
 load_dotenv()
+KNOWN_SYMBOLS = ["BTCUSDC", "XRPUSDC", "BCHUSDC", "TRXUSDC", "PEPEUSDC", "SHIBUSDC", "BNBUSDC"]
 
-# Symboly, které boty obchodovaly
-KNOWN_SYMBOLS = ["BTCUSDC", "XRPUSDC", "BCHUSDC", "TRXUSDC",
-                 "PEPEUSDC", "SHIBUSDC", "BNBUSDC"]
-
-# ── Binance API ───────────────────────────────────────────────────────────────
 
 def get_client() -> Client:
-    key    = os.getenv("API_KEY")
+    key = os.getenv("API_KEY")
     secret = os.getenv("API_SECRET")
     if not key or not secret:
-        sys.exit("[CHYBA] Chybí API_KEY nebo API_SECRET v .env")
+        sys.exit("[ERROR] Missing API_KEY or API_SECRET in .env")
     return Client(key, secret)
 
 
@@ -57,14 +52,14 @@ def load_trades_from_api(client: Client,
                 kwargs["startTime"] = from_ts
             raw = client.get_my_trades(**kwargs)
         except Exception as e:
-            print(f"  [!] Nepodařilo se načíst {sym}: {e}")
+            print(f"[WARNING] Couldn't load {sym}: {e}")
             continue
 
         for t in raw:
             tid = int(t["id"])
             if tid in exclude_ids:
-                print(f"  [přeskočeno] ID {tid}  {sym}  {'BUY' if t['isBuyer'] else 'SELL'}  "
-                      f"qty={t['qty']}  notional={t['quoteQty']}")
+                print(f"[SKIPPED] ID {tid} {sym} {'BUY' if t['isBuyer'] else 'SELL'}  "
+                      f"qty={t['qty']} notional={t['quoteQty']}")
                 continue
 
             ts = int(t["time"])
@@ -96,14 +91,14 @@ def fetch_price_history(client: Client, symbol: str,
     if not timestamps_ms:
         return {}
     start = min(timestamps_ms)
-    end   = max(timestamps_ms) + 60_000
+    end = max(timestamps_ms) + 60_000
     try:
         klines = client.get_historical_klines(
             symbol, Client.KLINE_INTERVAL_1MINUTE,
             start_str=str(start), end_str=str(end)
         )
     except Exception as e:
-        print(f"  [!] Nepodařilo se načíst klines pro {symbol}: {e}")
+        print(f"[WARNING] Couldn't load klines for {symbol}: {e}")
         return {}
     return {int(k[0]): float(k[4]) for k in klines}
 
@@ -128,9 +123,9 @@ def resolve_fees(client: Client,
     resolved: dict[str, dict] = {}
 
     for f in fee_events:
-        asset  = f["asset"]
+        asset = f["asset"]
         amount = f["amount"]
-        ts     = f["time"]
+        ts = f["time"]
 
         if asset == "USDC":
             usdc_val = amount
@@ -142,19 +137,19 @@ def resolve_fees(client: Client,
             elif bnb_map:
                 # Nejbližší dostupná minuta
                 closest = min(bnb_map, key=lambda t: abs(t - ts))
-                price   = bnb_map[closest]
+                price = bnb_map[closest]
             else:
                 price = current_prices.get("BNBUSDC", 0.0)
             usdc_val = amount * price
-            method   = "historická cena (1m kline)"
+            method = "historická cena (1m kline)"
         else:
-            price    = current_prices.get(asset + "USDC", 0.0)
+            price = current_prices.get(asset + "USDC", 0.0)
             usdc_val = amount * price
-            method   = "aktuální cena"
+            method = "aktuální cena"
 
         if asset not in resolved:
             resolved[asset] = {"amount": 0.0, "usdc_value": 0.0, "method": method}
-        resolved[asset]["amount"]     += amount
+        resolved[asset]["amount"] += amount
         resolved[asset]["usdc_value"] += usdc_val
 
     return resolved
@@ -179,15 +174,14 @@ def get_balances(client: Client) -> dict[str, float]:
     }
 
 
-# ── P&L výpočet (AVCO) ────────────────────────────────────────────────────────
-
+# P&L count (AVCO)
 class Position:
     def __init__(self):
         self.qty: float = 0.0
         self.total_cost: float = 0.0
         self.avg_cost: float = 0.0
         self.realized: float = 0.0
-        self.pre_existing_sold: float = 0.0  # prodáno z předchozích holdings (neznámý cost basis)
+        self.pre_existing_sold: float = 0.0  # sold from previous holdings (unknown cost basis)
 
     def buy(self, qty: float, notional: float):
         self.total_cost += notional
@@ -226,8 +220,6 @@ def calculate_pnl(trades: list[dict]) -> dict[str, Position]:
             positions[sym].sell(t["qty"], t["notional"])
     return positions
 
-
-# ── Výpis ─────────────────────────────────────────────────────────────────────
 
 def fmt(v: float, plus: bool = True) -> str:
     sign = "+" if plus and v >= 0 else ""
