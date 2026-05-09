@@ -1,18 +1,3 @@
-"""
-evaluate.py — Vyhodnocení live-trading běhu SMA_FG / EMA_FG strategií.
-
-Použití:
-  python evaluate.py --strategy sma
-  python evaluate.py --strategy ema
-  python evaluate.py --strategy both
-  python evaluate.py --strategy sma --config-change 2026-04-28
-  python evaluate.py --strategy both --from 2026-04-24 --to 2026-05-08
-
-Výstup:
-  - Textové shrnutí do konzole
-  - Graf uložený jako evaluate_<strategy>.png
-"""
-
 import argparse
 import os
 import sys
