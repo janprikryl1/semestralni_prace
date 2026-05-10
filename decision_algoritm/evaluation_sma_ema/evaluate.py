@@ -168,8 +168,7 @@ def cumulative_notional(trades: pd.DataFrame) -> pd.DataFrame:
     return merged.reset_index()
 
 
-def print_summary(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd.DataFrame,
-                  config_change: datetime | None):
+def print_summary(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd.DataFrame, config_change: datetime | None):
     label = meta["label"]
     print(f"\nStrategy: {label} ({meta['trading_type']})")
     if decisions.empty:
@@ -225,8 +224,7 @@ def print_summary(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd
             print(grp.to_string())
 
 
-def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd.DataFrame,
-                  config_change: datetime | None, out_path: str):
+def plot_strategy(strategy: str, meta: dict, decisions: pd.DataFrame, trades: pd.DataFrame, config_change: datetime | None, out_path: str):
     label = meta["label"]
 
     fig = plt.figure(figsize=(18, 14))
