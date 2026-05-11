@@ -1,17 +1,3 @@
-"""
-pnl.py — Přesný výpočet P&L z Binance API + aktuální ceny
-
-Použití:
-  python pnl.py
-  python pnl.py --exclude-ids 2635588222,2635599964
-  python pnl.py --from 2026-04-09
-
-Metodika: Average Cost (AVCO)
-  realized P&L  = (prodejní cena − průměrná nákupní cena) × prodané množství
-  unrealized P&L = (aktuální cena − průměrná nákupní cena) × držené množství
-  total P&L     = realized + unrealized
-"""
-
 import argparse
 import os
 import sys
@@ -34,9 +20,9 @@ def get_client() -> Client:
 
 def load_trades_from_api(client: Client, symbols: list[str], from_ts: int | None, exclude_ids: set[int]) -> tuple[list[dict], list[dict]]:
     """
-    Vrací (trades, fee_events).
-    fee_events = [{asset, amount, time}, ...] — jeden záznam na každý trade,
-    uchovává timestamp pro pozdější historický přepočet.
+    Returns (trades, fee_events).
+    fee_events = [{asset, amount, time}, ...] — one record for each trade,
+    stores a timestamp for later historical recalculation.
     """
     all_trades: list[dict] = []
     fee_events: list[dict] = []
@@ -81,10 +67,7 @@ def load_trades_from_api(client: Client, symbols: list[str], from_ts: int | None
 
 
 def fetch_price_history(client: Client, symbol: str, timestamps_ms: list[int]) -> dict[int, float]:
-    """
-    Načte minutové klines pro daný symbol jedním API voláním
-    a vrátí mapu {open_time_ms → close_price}.
-    """
+    #Retrieves one-minute price data for a given symbol with a single API call and returns a map {open_time_ms → close_price}
     if not timestamps_ms:
         return {}
     start = min(timestamps_ms)
@@ -102,12 +85,12 @@ def fetch_price_history(client: Client, symbol: str, timestamps_ms: list[int]) -
 
 def resolve_fees(client: Client, fee_events: list[dict], current_prices: dict[str, float]) -> dict[str, dict]:
     """
-    Převede fee_events na USDC hodnoty:
-      BNB   → historická cena z 1m klines (jedno hromadné volání)
-      USDC  → přímá hodnota
-      ostatní → aktuální cena (PEPE fees jsou zanedbatelné)
+    Converts fee_events to USDC values:
+      BNB   → historical price from 1-month averages (single batch call)
+      USDC  → direct value
+      others → current price (PEPE fees are negligible)
 
-    Vrací {asset: {amount, usdc_value, method}}.
+    Returns {asset: {amount, usdc_value, method}}.
     """
     bnb_times = [f["time"] for f in fee_events if f["asset"] == "BNB"]
     bnb_map = fetch_price_history(client, "BNBUSDC", bnb_times)
@@ -300,7 +283,7 @@ def print_report(positions: dict[str, Position], resolved_fees: dict[str, dict],
     total_pre_sold = 0.0
 
     print(f"\n{sep2}")
-    print("P&L ANALÝZA — AVCO metodika")
+    print("P&L ANALÝZA — AVCO")
     print(f"{sep2}")
 
     # Realized P&L
@@ -371,7 +354,7 @@ def print_report(positions: dict[str, Position], resolved_fees: dict[str, dict],
     bnb_price = current_prices.get("BNBUSDC", 0.0)
     bnb_val = bnb * bnb_price
     if bnb > 1e-9:
-        warn = "[!] CENA NENAČTENA — nezapočítáno!" if bnb_price == 0.0 else ""
+        warn = "[Warning] CENA NENAČTENA — nezapočítáno!" if bnb_price == 0.0 else ""
         print(f"{'BNB':<14} {bnb:>14.8f} × {bnb_price:>12.4f} = {bnb_val:>8.4f} USDC{warn}")
         crypto_total += bnb_val
 
@@ -396,12 +379,12 @@ def print_report(positions: dict[str, Position], resolved_fees: dict[str, dict],
     print("SHRNUTÍ")
     print(sep2)
     print(f"Realizovaný P&L (bot trades): {total_realized}")
-    print(f"Unrealizovaný P&L: {total_unrealized}")
+    print(f"Nezrealizovaný P&L: {total_unrealized}")
     print(f"─────────────────────────────────────────────────────────")
     print(f"P&L před poplatky: {net_pnl}")
     print(f"Poplatky celkem: {total_fees_usdc}")
     print(f"═════════════════════════════════════════════════════════")
-    print(f"Čistý P&L po poplatcích: {net_pnl_after}")
+    print(f"P&L po poplatcích: {net_pnl_after}")
     print(f"{sep2}\n")
 
 
@@ -444,7 +427,7 @@ def main():
 
     client = get_client()
 
-    print(f"[Info] Loading trades form {args.date_from} for symbols: {', '.join(symbols)}")
+    print(f"[Info] Loading trades from {args.date_from} for symbols: {', '.join(symbols)}")
     trades, fee_events = load_trades_from_api(client, symbols, from_ts, exclude_ids)
     print(f"[Info] Loaded {len(trades)} trades, {len(fee_events)} fee records\n")
     prices = get_current_prices(client, symbols + ["BNBUSDC"])
