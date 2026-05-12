@@ -19,10 +19,10 @@
     "stl_trend":        "#b07d10",
     "stl_seasonal":     "#16803a",
     "stl_resid":        "#6b7280",
-    "bar_strong_sell":  "#dc2626",
-    "bar_sell":         "#f97316",
+    "bar_very_below":   "#dc2626",
+    "bar_below":        "#f97316",
     "bar_neutral":      "#eab308",
-    "bar_buy":          "#22c55e",
-    "bar_strong_buy":   "#16a34a"
+    "bar_above":        "#22c55e",
+    "bar_very_above":   "#16a34a"
   }
 }

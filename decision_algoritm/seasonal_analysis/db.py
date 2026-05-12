@@ -32,8 +32,7 @@ def load_price_data() -> pd.DataFrame:
     with _connect() as conn:
         df = pd.read_sql(query, conn, params=COINS, parse_dates=["date"])
 
-    print(f"[Debug]: {len(df):,} records | {df['coin'].nunique()} coin | "
-          f"{df['date'].min().date()} -> {df['date'].max().date()}")
+    print(f"[Debug]: {len(df):,} records | {df['coin'].nunique()} coin | {df['date'].min().date()} -> {df['date'].max().date()}")
     return df
 
 
@@ -43,9 +42,9 @@ def normalize_by_year(df: pd.DataFrame) -> pd.DataFrame:
     in price relative to the first available price in that year.
     """
     df = df.copy()
-    df["year"]        = df["date"].dt.year
+    df["year"] = df["date"].dt.year
     df["day_of_year"] = df["date"].dt.dayofyear
-    df["month"]       = df["date"].dt.month
+    df["month"] = df["date"].dt.month
 
     parts = []
     for (coin, year), grp in df.groupby(["coin", "year"]):

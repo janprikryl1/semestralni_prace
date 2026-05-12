@@ -4,7 +4,6 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 from statsmodels.tsa.seasonal import STL
-
 from config import COINS
 
 # Nazvy rezimu pro ruzny pocet clusteru (0 = nejvetsi medved, N-1 = nejvetsi byk)
@@ -40,8 +39,7 @@ def detect_regimes(norm_df: pd.DataFrame, n_clusters: int = 4) -> pd.DataFrame:
 
     pivot = (
         norm_df
-        .pivot_table(index=["year", "day_of_year"], columns="coin",
-                     values="pct", aggfunc="mean")
+        .pivot_table(index=["year", "day_of_year"], columns="coin", values="pct", aggfunc="mean")
         .reset_index()
         .dropna(subset=COINS)
     )
@@ -75,11 +73,9 @@ def elbow_and_silhouette(norm_df: pd.DataFrame, k_range: range = range(2, 11)):
     Vypocet inertie (elbow) a silhouette score pro k v zadanem rozsahu.
     Pomaha urcit optimalni pocet clusteru.
     """
-    print("\nElbow / Silhouette analyza...")
     pivot = (
         norm_df
-        .pivot_table(index=["year", "day_of_year"], columns="coin",
-                     values="pct", aggfunc="mean")
+        .pivot_table(index=["year", "day_of_year"], columns="coin", values="pct", aggfunc="mean")
         .dropna(subset=COINS)
     )
     X = StandardScaler().fit_transform(pivot[COINS].values)
@@ -110,27 +106,6 @@ def year_correlation(norm_df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     return result
 
 
-def stl_decompose(norm_df: pd.DataFrame, coin: str = "BTC") -> dict:
-    """
-    STL dekompozice prumerneho sezonniho vzoru daneho coinu.
-    Rozklada signal na: trend, sezona, residuum.
-    """
-    avg = (
-        norm_df[norm_df["coin"] == coin]
-        .groupby("day_of_year")["pct"]
-        .mean()
-        .sort_index()
-    )
-    res = STL(avg, period=52, robust=True).fit()
-    return {
-        "day":      avg.index.values,
-        "original": avg.values,
-        "trend":    res.trend,
-        "seasonal": res.seasonal,
-        "resid":    res.resid,
-    }
-
-
 def compute_monthly_scores(norm_df: pd.DataFrame) -> pd.DataFrame:
     """
     Pro kazdy mesic spocte prumerny vysledek obchodu (konec - zacatek mesice)
@@ -149,9 +124,9 @@ def compute_monthly_scores(norm_df: pd.DataFrame) -> pd.DataFrame:
         if len(grp) < 5:
             continue
         records.append({
-            "coin":           coin,
-            "year":           year,
-            "month":          month,
+            "coin": coin,
+            "year": year,
+            "month": month,
             "monthly_return": grp["pct"].iloc[-1] - grp["pct"].iloc[0],
         })
 
