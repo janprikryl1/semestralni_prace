@@ -20,9 +20,9 @@ def print_correlation_summary(corr_dict: dict[str, pd.DataFrame]) -> None:
 def print_monthly_recommendations(scores: pd.DataFrame) -> None:
     w = 65
     print("\n" + "=" * w)
-    print("DOPORUCENI — Kdy kupovat / prodavat")
+    print("DOPORUČENÍ — Kdy nakupovat")
     print("=" * w)
-    print(f"{'Mesic':<12} {'Prumer':>10} Doporuceni")
+    print(f"{'Měsíc':<12} {'Průměr':>10} Doporučeni")
     print("-" * w)
     for _, row in scores.iterrows():
         m = int(row["month"])
@@ -32,5 +32,5 @@ def print_monthly_recommendations(scores: pd.DataFrame) -> None:
     print("=" * w)
     best = scores.loc[scores["mean_return"].idxmax()]
     worst = scores.loc[scores["mean_return"].idxmin()]
-    print(f"  Nejlepsi mesic pro nakup : {MONTHS_FULL_CZ[int(best['month']) - 1]} (prumer {best['mean_return']:.1f}%)")
-    print(f"  Nejhorsi mesic pro nákup {MONTHS_FULL_CZ[int(worst['month']) - 1]} (prumer {worst['mean_return']:+.1f}%)")
+    print(f"  Nejlepší měsíc pro nákup : {MONTHS_FULL_CZ[int(best['month']) - 1]} (průměr {best['mean_return']:.1f}%)")
+    print(f"  Nejhorší měsíc pro nákup: {MONTHS_FULL_CZ[int(worst['month']) - 1]} (průměr {worst['mean_return']:+.1f}%)")

@@ -4,15 +4,7 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 from statsmodels.tsa.seasonal import STL
-from config import COINS
-
-# Nazvy rezimu pro ruzny pocet clusteru (0 = nejvetsi medved, N-1 = nejvetsi byk)
-_REGIME_NAMES: dict[int, dict[int, str]] = {
-    4: {0: "Silny medved", 1: "Slaby medved",  2: "Bocni pohyb", 3: "Slaby byk"},
-    5: {0: "Silny medved", 1: "Slaby medved",  2: "Bocni pohyb", 3: "Slaby byk",   4: "Silny byk"},
-    6: {0: "Silny medved", 1: "Medved",         2: "Bocni-",      3: "Bocni+",       4: "Slaby byk", 5: "Silny byk"},
-    7: {0: "Silny medved", 1: "Medved",         2: "Slaby medved",3: "Bocni pohyb",  4: "Slaby byk", 5: "Byk",       6: "Silny byk"},
-}
+from config import COINS, REGIME_NAMES
 
 
 def compute_average_pattern(norm_df: pd.DataFrame) -> pd.DataFrame:
@@ -29,14 +21,12 @@ def compute_average_pattern(norm_df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def detect_regimes(norm_df: pd.DataFrame, n_clusters: int = 4) -> pd.DataFrame:
+def detect_regimes(norm_df: pd.DataFrame, n_clusters: int = 2) -> pd.DataFrame:
     """
     K-Means clustering na dennich vynosovych vektorech.
     Kazdy den = vektor [pct_BTC, pct_ETH, pct_SOL, pct_XRP, pct_ADA].
     Clustery jsou serazeny od nejvetsiho medveda (0) po nejvetsiho byka (N-1).
     """
-    print(f"\nK-Means: hledam {n_clusters} trzni rezimy...")
-
     pivot = (
         norm_df
         .pivot_table(index=["year", "day_of_year"], columns="coin", values="pct", aggfunc="mean")
@@ -50,44 +40,20 @@ def detect_regimes(norm_df: pd.DataFrame, n_clusters: int = 4) -> pd.DataFrame:
     pivot["cluster"] = km.fit_predict(X)
 
     sil = silhouette_score(X, pivot["cluster"])
-    print(f"  Silhouette score: {sil:.3f}  (cim blize 1, tim lepe oddelene clustery)")
+    print(f"Silhouette score: {sil:.3f}") #cim blize 1, tim lepe oddelene clustery
 
     cluster_mean = pivot.groupby("cluster")[COINS].mean().mean(axis=1).sort_values()
     rank_map = {old: new for new, old in enumerate(cluster_mean.index)}
     pivot["regime"] = pivot["cluster"].map(rank_map)
+    pivot["regime_label"] = pivot["regime"].map(REGIME_NAMES)
 
-    labels = _REGIME_NAMES.get(n_clusters, {i: f"Rezim {i}" for i in range(n_clusters)})
-    pivot["regime_label"] = pivot["regime"].map(labels)
-
-    print("\n  Trzni rezimy:")
+    print("Tržní režimy:")
     for r in sorted(pivot["regime"].unique()):
         sub = pivot[pivot["regime"] == r]
         avg = sub[COINS].mean().mean()
-        print(f"  [{r}] {labels.get(r, r):<18} -- {len(sub):>4} dni | prumer {avg:+6.1f}%")
+        print(f"  [{r}] {REGIME_NAMES.get(r, r):<18} -- {len(sub):>4} dní | průměr {avg:+6.1f}%")
 
     return pivot
-
-
-def elbow_and_silhouette(norm_df: pd.DataFrame, k_range: range = range(2, 11)):
-    """
-    Vypocet inertie (elbow) a silhouette score pro k v zadanem rozsahu.
-    Pomaha urcit optimalni pocet clusteru.
-    """
-    pivot = (
-        norm_df
-        .pivot_table(index=["year", "day_of_year"], columns="coin", values="pct", aggfunc="mean")
-        .dropna(subset=COINS)
-    )
-    X = StandardScaler().fit_transform(pivot[COINS].values)
-
-    inertias, silhouettes = [], []
-    for k in k_range:
-        km = KMeans(n_clusters=k, random_state=42, n_init=20)
-        lbls = km.fit_predict(X)
-        inertias.append(km.inertia_)
-        silhouettes.append(silhouette_score(X, lbls))
-
-    return list(k_range), inertias, silhouettes
 
 
 def year_correlation(norm_df: pd.DataFrame) -> dict[str, pd.DataFrame]:

@@ -7,7 +7,8 @@ import seaborn as sns
 from config import (
     COINS, YEARS, COIN_COLORS, CHART,
     MONTH_STARTS, MONTHS_CZ, MONTHS_FULL_CZ,
-    BG, CARD_BG, BORDER, TEXT, MUTED, ZEROLINE, OUTPUT_DIR, THRESHOLDS, legend_items,
+    BG, CARD_BG, BORDER, TEXT, MUTED, ZEROLINE,
+    OUTPUT_DIR, THRESHOLDS, legend_items,
 )
 
 
@@ -48,12 +49,12 @@ def plot_avg_seasonal(avg_df: pd.DataFrame) -> plt.Figure:
             d["mean_pct"] + d["std_pct"],
             alpha=0.18, color=COIN_COLORS[coin],
         )
-        ax.plot(d["day"], d["mean_pct"], color=COIN_COLORS[coin], linewidth=2.2, label=f"{coin} prumer")
+        ax.plot(d["day"], d["mean_pct"], color=COIN_COLORS[coin], linewidth=2.2, label=f"{coin} průměr")
         ax.set_ylabel("% od 1. ledna", color=MUTED, fontsize=9)
         ax.legend(loc="upper right", facecolor=CARD_BG, labelcolor=TEXT, framealpha=0.8, fontsize=9)
 
     plt.tight_layout()
-    save_graph(fig, "01_avg_seasonal_pattern.png")
+    save_graph(fig, "avg_seasonal_pattern.png")
     return fig
 
 
@@ -79,34 +80,7 @@ def plot_all_years_overlay(norm_df: pd.DataFrame) -> plt.Figure:
         ax.legend(loc="upper right", facecolor=CARD_BG, labelcolor=TEXT, framealpha=0.8, fontsize=9, ncol=3)
 
     plt.tight_layout()
-    save_graph(fig, "02_all_years_overlay.png")
-    return fig
-
-
-def plot_elbow(k_range: list, inertias: list, silhouettes: list) -> plt.Figure:
-    """Elbow (inertia) a Silhouette score pro vyber poctu clusteru."""
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4), facecolor=BG)
-    fig.suptitle("Vyber poctu clusteru (K-Means)", color=TEXT, fontsize=14)
-
-    for ax in (ax1, ax2):
-        _style_ax(ax)
-        ax.set_xlim(min(k_range) - 0.5, max(k_range) + 0.5)
-
-    ax1.plot(k_range, inertias, "o-", color=CHART["accent"], linewidth=2)
-    ax1.set_title("Elbow (inertia)", color=TEXT, fontsize=11)
-    ax1.set_xlabel("Pocet clusteru k", color=MUTED)
-    ax1.set_ylabel("Inertia", color=MUTED)
-
-    ax2.plot(k_range, silhouettes, "o-", color=CHART["bar_above"], linewidth=2)
-    ax2.set_title("Silhouette score", color=TEXT, fontsize=11)
-    ax2.set_xlabel("Pocet clusteru k", color=MUTED)
-    ax2.set_ylabel("Score (cim vyssi, tim lepe)", color=MUTED)
-    best_k = k_range[int(np.argmax(silhouettes))]
-    ax2.axvline(best_k, color=CHART["accent"], linestyle="--", linewidth=1.2, label=f"Optimalni k={best_k}")
-    ax2.legend(facecolor=CARD_BG, labelcolor=TEXT, fontsize=9)
-
-    plt.tight_layout()
-    save_graph(fig, "03_elbow_silhouette.png")
+    save_graph(fig, "all_years_overlay.png")
     return fig
 
 
@@ -140,7 +114,7 @@ def plot_regime_heatmap(regime_df: pd.DataFrame) -> plt.Figure:
     ax.tick_params(colors=MUTED)
     for spine in ax.spines.values():
         spine.set_edgecolor(BORDER)
-    ax.set_title("Tržní režimy (rok x den, K-Means)", color=TEXT, fontsize=13)
+    ax.set_title("Tržní režimy (rok x den)", color=TEXT, fontsize=13)
 
     lbl_map = regime_df.drop_duplicates("regime").set_index("regime")["regime_label"]
     patches = [
@@ -154,7 +128,7 @@ def plot_regime_heatmap(regime_df: pd.DataFrame) -> plt.Figure:
     cb.set_label("Režim", color=MUTED)
 
     plt.tight_layout()
-    save_graph(fig, "04_regime_heatmap.png")
+    save_graph(fig, "regime_heatmap.png")
     return fig
 
 
@@ -169,24 +143,29 @@ def plot_regime_calendar(regime_df: pd.DataFrame) -> plt.Figure:
     total = agg.groupby("day_of_year")["count"].sum()
     agg["share"] = agg.apply(lambda r: r["count"] / total[r["day_of_year"]], axis=1)
 
-    sorted_labels = sorted(regime_df["regime_label"].unique())
-    n_reg = len(sorted_labels)
+    label_order = (
+        regime_df[["regime", "regime_label"]]
+        .drop_duplicates()
+        .sort_values("regime")["regime_label"]
+        .tolist()
+    )
+    n_reg = len(label_order)
     cmap = plt.cm.get_cmap("RdYlGn", n_reg)
-    colors = {lbl: cmap(i / max(n_reg - 1, 1)) for i, lbl in enumerate(sorted_labels)}
+    colors = {lbl: cmap(i / max(n_reg - 1, 1)) for i, lbl in enumerate(label_order)}
 
     fig, ax = plt.subplots(figsize=(16, 5), facecolor=BG)
     _style_ax(ax, xlabel=True)
     ax.set_title("Zastoupení tržního režimu v průběhu roku", color=TEXT, fontsize=13)
-    ax.set_ylabel("Podil dni", color=MUTED)
+    ax.set_ylabel("Podíl dní", color=MUTED)
     ax.set_ylim(0, 1)
 
-    for lbl in sorted_labels:
+    for lbl in label_order:
         d = agg[agg["regime_label"] == lbl].sort_values("day_of_year")
         ax.fill_between(d["day_of_year"], 0, d["share"], alpha=0.55, color=colors[lbl], label=lbl)
 
     ax.legend(loc="upper right", facecolor=CARD_BG, labelcolor=TEXT, framealpha=0.85, fontsize=9)
     plt.tight_layout()
-    save_graph(fig, "05_regime_calendar.png")
+    save_graph(fig, "regime_calendar.png")
     return fig
 
 
@@ -206,11 +185,13 @@ def plot_year_correlation(corr_dict: dict) -> plt.Figure:
             linewidths=0.5, linecolor=BORDER,
         )
         ax.set_title(coin, color=COIN_COLORS[coin], fontsize=12, pad=4)
+        ax.set_xlabel("Rok", color=MUTED)
+        ax.set_ylabel("Rok", color=MUTED)
         ax.set_facecolor(BG)
         ax.tick_params(colors=MUTED, labelsize=8)
 
     plt.tight_layout()
-    save_graph(fig, "06_year_correlation.png")
+    save_graph(fig, "year_correlation.png")
     return fig
 
 
@@ -227,12 +208,10 @@ def plot_monthly_recommendations(scores: pd.DataFrame) -> plt.Figure:
 
     x = scores["month"].values
     y = scores["mean_return"].values
-    yerr = scores["std_return"].values
     colors = [_bar_color(v) for v in y]
 
     fig, ax = plt.subplots(figsize=(14, 6), facecolor=BG)
     bars = ax.bar(x, y, color=colors, width=0.7, alpha=0.85, zorder=3)
-    ax.errorbar(x, y, yerr=yerr, fmt="none", color=MUTED, capsize=5, linewidth=1.3, alpha=0.55, zorder=4)
 
     for bar, (_, row) in zip(bars, scores.iterrows()):
         h = bar.get_height()
@@ -243,8 +222,8 @@ def plot_monthly_recommendations(scores: pd.DataFrame) -> plt.Figure:
 
     ax.set_xticks(x)
     ax.set_xticklabels(MONTHS_FULL_CZ, rotation=30, ha="right", color=MUTED, fontsize=9)
-    ax.set_ylabel("Průměrný mesíční výnos (% bodu)", color=MUTED)
-    ax.set_title("Měsíční doporučeni", color=TEXT, fontsize=13)
+    ax.set_ylabel("Průměrný mesíční výnos (%)", color=MUTED)
+    ax.set_title("Měsíční doporučení", color=TEXT, fontsize=13)
     ax.set_facecolor(BG)
     ax.tick_params(colors=MUTED)
     for spine in ax.spines.values():
@@ -254,5 +233,5 @@ def plot_monthly_recommendations(scores: pd.DataFrame) -> plt.Figure:
     ax.legend(handles=legend_items, loc="upper right", facecolor=CARD_BG, labelcolor=TEXT, fontsize=8, framealpha=0.9)
 
     plt.tight_layout()
-    save_graph(fig, "08_monthly_recommendations.png")
+    save_graph(fig, "monthly_recommendations.png")
     return fig
